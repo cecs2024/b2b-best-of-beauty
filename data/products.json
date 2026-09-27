@@ -1,0 +1,74 @@
+[
+  {
+    "id": "prod-1",
+    "name": "Organic Face Serum with Hyaluronic Acid",
+    "category": "Skincare",
+    "price": 899,
+    "originalPrice": 1199,
+    "rating": 4.9,
+    "reviews": 84,
+    "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80",
+    "badge": "Best Seller",
+    "description": "Intense hydration serum infused with botanical extracts, Niacinamide, and Vitamin B5 for an instant glass-skin radiance."
+  },
+  {
+    "id": "prod-2",
+    "name": "Hydrating Hair Mask & Argan Oil Treatment",
+    "category": "Haircare",
+    "price": 749,
+    "originalPrice": 999,
+    "rating": 4.8,
+    "reviews": 62,
+    "image": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80",
+    "badge": "Organic",
+    "description": "Deep nourishment mask with Moroccan Argan Oil and Shea Butter to restore damaged tresses and prevent frizz."
+  },
+  {
+    "id": "prod-3",
+    "name": "24K Gold Radiance Glow Cream",
+    "category": "Skincare",
+    "price": 1299,
+    "originalPrice": 1699,
+    "rating": 5.0,
+    "reviews": 112,
+    "image": "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80",
+    "badge": "Luxury",
+    "description": "Youth-boosting moisturizing cream enriched with pure 24K gold flakes and Peptide complex for firm, illuminated skin."
+  },
+  {
+    "id": "prod-4",
+    "name": "Pure Rose Water Mist & Floral Toner",
+    "category": "Skincare",
+    "price": 399,
+    "originalPrice": 549,
+    "rating": 4.7,
+    "reviews": 140,
+    "image": "https://images.unsplash.com/photo-1608248597309-1705888e404b?auto=format&fit=crop&w=800&q=80",
+    "badge": "Popular",
+    "description": "Steam-distilled pure Kannauj rose water to tone pores, restore natural pH balance, and refresh makeup throughout the day."
+  },
+  {
+    "id": "prod-5",
+    "name": "Vitamin C Brightening Facial Cleanser",
+    "category": "Skincare",
+    "price": 499,
+    "originalPrice": 699,
+    "rating": 4.8,
+    "reviews": 96,
+    "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+    "badge": "New",
+    "description": "Gentle foaming gel cleanser infused with Kakadu Plum Vitamin C and AHA fruit acids to unclog pores and brighten dull complexion."
+  },
+  {
+    "id": "prod-6",
+    "name": "Luxury Botanical Nail & Cuticle Oil",
+    "category": "Nail Care",
+    "price": 349,
+    "originalPrice": 499,
+    "rating": 4.9,
+    "reviews": 53,
+    "image": "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80",
+    "badge": "Organic",
+    "description": "Nourishing blend of Jojoba, Vitamin E, and Lavender essential oil to strengthen brittle nails and soften dry cuticles."
+  }
+]

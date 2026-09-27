@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ORD-5012",
+    "customerName": "Meera Verma",
+    "phone": "9988776655",
+    "address": "42 Rosewood Avenue, Green Park, New Delhi",
+    "paymentMethod": "UPI / WhatsApp Pay",
+    "items": [
+      {
+        "id": "prod-1",
+        "name": "Organic Face Serum with Hyaluronic Acid",
+        "price": 899,
+        "quantity": 1
+      },
+      {
+        "id": "prod-4",
+        "name": "Pure Rose Water Mist & Floral Toner",
+        "price": 399,
+        "quantity": 2
+      }
+    ],
+    "subtotal": 1697,
+    "discount": 0,
+    "total": 1697,
+    "status": "Confirmed",
+    "createdAt": "2025-03-01T09:30:00.000Z"
+  }
+]

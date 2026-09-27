@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B (Best of Beauty) — Radiate Beauty, Embrace Confidence</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blush: {
+              50: '#FDF6F6',
+              100: '#F8E7E7',
+              200: '#E8C5C5',
+            },
+            rosegold: {
+              400: '#EED08B',
+              500: '#D4AF37',
+              600: '#C5A059',
+              700: '#9A7831',
+            },
+            slate: {
+              950: '#1A1A1A',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-blush-50 text-slate-950 font-sans antialiased">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-20 right-5 z-50 flex flex-col space-y-3 pointer-events-none *:pointer-events-auto"></div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-rosegold-600/20 shadow-sm transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <!-- Brand Logo - B2B (Best of Beauty) -->
+      <a href="#home" class="flex items-center space-x-3 group">
+        <div class="w-11 h-11 rounded-2xl bg-rose-gold-gradient flex flex-col items-center justify-center text-slate-950 font-extrabold shadow-lg group-hover:scale-105 transition-transform border border-amber-300/40">
+          <span class="font-cinzel text-base tracking-tighter leading-none text-slate-950 font-black">B2B</span>
+          <span class="text-[7px] tracking-widest text-slate-900 font-bold uppercase leading-tight">BEAUTY</span>
+        </div>
+        <div>
+          <span class="font-cinzel text-xl sm:text-2xl font-black tracking-wider text-slate-950 block leading-none">B2B</span>
+          <span class="text-[9px] uppercase tracking-[0.2em] text-rosegold-700 font-extrabold block mt-0.5">Best of Beauty</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-stone-700">
+        <a href="#home" class="hover:text-rosegold-600 transition-colors">Home</a>
+        <a href="#services" class="hover:text-rosegold-600 transition-colors">Services</a>
+        <a href="#shop" class="hover:text-rosegold-600 transition-colors">Boutique Shop</a>
+        <a href="#about" class="hover:text-rosegold-600 transition-colors">About Us</a>
+        <a href="#contact" class="hover:text-rosegold-600 transition-colors">Contact</a>
+      </nav>
+
+      <!-- Right Action Bar -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+
+        <!-- Cart Button -->
+        <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-stone-100 hover:bg-rosegold-50 text-slate-950 transition-all border border-stone-200">
+          <i class="fas fa-shopping-bag text-lg text-stone-800"></i>
+          <span id="cartBadgeCount" class="absolute -top-1.5 -right-1.5 bg-rose-600 text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white hidden">0</span>
+        </button>
+
+        <!-- Owner Admin Button -->
+        <button onclick="toggleAdminModal()" class="relative px-3 py-2 rounded-xl bg-stone-900 text-amber-300 hover:bg-stone-800 text-xs font-semibold flex items-center space-x-2 border border-rosegold-600/40 shadow-sm">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+          <i class="fas fa-user-shield text-xs"></i>
+          <span class="hidden sm:inline">Owner Admin</span>
+          <span id="adminNoticeBadge" class="bg-rose-600 text-white font-bold text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
+        </button>
+
+        <!-- Book CTA Button -->
+        <button onclick="openBookingModalForService()" class="hidden sm:flex bg-rose-gold-gradient hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all items-center space-x-2">
+          <i class="far fa-calendar-check text-xs"></i>
+          <span>Book Appointment</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- 🏠 HERO SECTION -->
+  <section id="home" class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-16">
+    <!-- HD Background Image -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1920&q=80" alt="B2B (Best of Beauty) Interior" class="w-full h-full object-cover">
+      <div class="absolute inset-0 hero-overlay"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center text-white space-y-6">
+
+      <!-- Luxury Badge -->
+      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-amber-300/30 text-amber-200 text-xs sm:text-sm uppercase tracking-widest font-semibold shadow-xl">
+        <i class="fas fa-sparkles text-amber-300"></i>
+        <span>B2B (Best of Beauty) Premier Luxury Sanctuary</span>
+      </div>
+
+      <!-- Slogan -->
+      <h1 class="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-white max-w-4xl mx-auto">
+        Radiate Beauty, Embrace Confidence
+        <span class="block text-amber-300 font-serif italic text-2xl sm:text-4xl lg:text-5xl mt-2 font-normal">
+          Your Ultimate Pampering & Glow Experience
+        </span>
+      </h1>
+
+      <!-- Description -->
+      <p class="max-w-2xl mx-auto text-stone-200 text-sm sm:text-base font-light leading-relaxed">
+        Experience B2B (Best of Beauty) bespoke hair styling, medical-grade facial treatments, and regal bridal makeovers crafted by internationally certified estheticians in an atmosphere of pure opulence.
+      </p>
+
+      <!-- CTAs -->
+      <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <button onclick="openBookingModalForService()" class="w-full sm:w-auto bg-rose-gold-gradient hover:opacity-95 text-slate-950 font-bold px-8 py-4 rounded-xl shadow-xl text-base transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+          <i class="far fa-calendar-alt"></i>
+          <span>Book Appointment</span>
+        </button>
+        <a href="#services" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 font-semibold px-8 py-4 rounded-xl text-base transition-all flex items-center justify-center space-x-2">
+          <span>Explore Services</span>
+          <i class="fas fa-arrow-down text-xs text-amber-300"></i>
+        </a>
+      </div>
+
+      <!-- Highlights Bar -->
+      <div class="pt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-center border-t border-white/15">
+        <div class="p-3">
+          <span class="block text-2xl font-bold text-amber-300 font-heading">10,000+</span>
+          <span class="text-xs text-stone-300 uppercase tracking-wider">Satisfied Guests</span>
+        </div>
+        <div class="p-3">
+          <span class="block text-2xl font-bold text-amber-300 font-heading">4.9 ★</span>
+          <span class="text-xs text-stone-300 uppercase tracking-wider">Customer Rating</span>
+        </div>
+        <div class="p-3">
+          <span class="block text-2xl font-bold text-amber-300 font-heading">100%</span>
+          <span class="text-xs text-stone-300 uppercase tracking-wider">Organic Botanicals</span>
+        </div>
+        <div class="p-3">
+          <span class="block text-2xl font-bold text-amber-300 font-heading">Master</span>
+          <span class="text-xs text-stone-300 uppercase tracking-wider">Certified Stylists</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 💆‍♀️ 2. BEAUTY SERVICES SECTION -->
+  <section id="services" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <span class="text-xs font-bold uppercase tracking-widest text-rosegold-700 bg-rosegold-50 border border-rosegold-200 px-3 py-1 rounded-full">
+        Curated Treatments
+      </span>
+      <h2 class="font-heading text-3xl sm:text-4xl font-bold text-slate-950 mt-3">
+        Our Signature Beauty & Spa Menu
+      </h2>
+      <div class="w-20 h-1 bg-rose-gold-gradient mx-auto mt-4 rounded-full"></div>
+      <p class="text-stone-600 text-sm sm:text-base mt-4">
+        Immerse yourself in deeply transformative beauty rituals designed for ultimate relaxation and undeniable radiance at B2B (Best of Beauty).
+      </p>
+    </div>
+
+    <!-- Services Dynamic Cards Container -->
+    <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Injected dynamically via app.js -->
+    </div>
+  </section>
+
+  <!-- 🛒 3. BEAUTY PRODUCTS E-COMMERCE STORE -->
+  <section id="shop" class="py-20 bg-blush-100/60 border-y border-rosegold-200/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-rosegold-700 bg-white border border-rosegold-200 px-3 py-1 rounded-full">
+            B2B Organics E-Store
+          </span>
+          <h2 class="font-heading text-3xl sm:text-4xl font-bold text-slate-950 mt-3">
+            Boutique Skincare & Hair Treatments
+          </h2>
+          <p class="text-stone-600 text-sm mt-2 max-w-xl">
+            Take home the luxurious salon glow with our dermatologist-approved, cruelty-free organic formulations from B2B (Best of Beauty).
+          </p>
+        </div>
+
+        <button onclick="toggleCartDrawer()" class="mt-4 md:mt-0 inline-flex items-center space-x-2 bg-slate-950 hover:bg-slate-800 text-amber-300 text-xs font-bold px-5 py-3 rounded-xl shadow-md transition-all">
+          <i class="fas fa-shopping-bag"></i>
+          <span>View Cart & Checkout</span>
+        </button>
+      </div>
+
+      <!-- Products Grid Container -->
+      <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Injected dynamically via app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT & FEATURE HIGHLIGHTS -->
+  <section id="about" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+      <div class="relative">
+        <div class="rounded-3xl overflow-hidden shadow-2xl border-2 border-rosegold-500/30">
+          <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80" alt="Facial Therapy B2B Lounge" class="w-full h-[450px] object-cover">
+        </div>
+        <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-rosegold-200 hidden sm:block max-w-xs">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-full bg-rose-gold-gradient flex items-center justify-center text-slate-950 font-bold text-xl">
+              <i class="fas fa-gem"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-950">Strict Hygiene</h4>
+              <p class="text-xs text-stone-500">100% Sanitized Tools & Disposable Capes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <span class="text-xs font-bold uppercase tracking-widest text-rosegold-700 bg-rosegold-50 border border-rosegold-200 px-3 py-1 rounded-full">
+          The B2B Promise
+        </span>
+        <h2 class="font-heading text-3xl sm:text-4xl font-bold text-slate-950 leading-tight">
+          Where Elegance Meets Science & Botanical Care
+        </h2>
+        <p class="text-stone-600 text-sm leading-relaxed">
+          Founded on the philosophy that true beauty stems from confidence and self-care, <strong>B2B (Best of Beauty)</strong> provides an oasis away from daily bustle. Every service is a tailored journey blending ancient Ayurveda botanicals with modern dermatological science.
+        </p>
+
+        <div class="space-y-4 pt-2">
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 rounded-lg bg-rosegold-50 border border-rosegold-300 flex items-center justify-center text-rosegold-700 shrink-0">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-950">Certified Senior Specialists</h4>
+              <p class="text-xs text-stone-500">Our artists undergo 200+ hours of annual luxury technique training.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 rounded-lg bg-rosegold-50 border border-rosegold-300 flex items-center justify-center text-rosegold-700 shrink-0">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-950">Tailored Consultation</h4>
+              <p class="text-xs text-stone-500">Includes complimentary skin & hair health diagnostics prior to every session.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 rounded-lg bg-rosegold-50 border border-rosegold-300 flex items-center justify-center text-rosegold-700 shrink-0">
+              <i class="fas fa-check text-xs"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-950">Instant Online Confirmation</h4>
+              <p class="text-xs text-stone-500">Book seamlessly with real-time slot allocation & WhatsApp updates.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 📅 4. APPOINTMENT BOOKING SYSTEM MODAL -->
+  <div id="bookingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+    <div class="glass-card bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-rosegold-300 relative max-h-[90vh] overflow-y-auto">
+
+      <button onclick="closeBookingModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-800 text-lg p-2">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 mx-auto rounded-full bg-rose-gold-gradient flex items-center justify-center text-slate-950 text-xl mb-2 shadow-md">
+          <i class="far fa-calendar-alt"></i>
+        </div>
+        <h3 class="font-heading text-2xl font-bold text-slate-950">Book Your Pampering Session</h3>
+        <p class="text-xs text-stone-500 mt-1">Reserve your spot at B2B (Best of Beauty) in under a minute</p>
+      </div>
+
+      <form id="bookingForm" onsubmit="handleBookingFormSubmit(event)" class="space-y-4">
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Full Name *</label>
+          <input type="text" id="bookingName" required placeholder="e.g. Ananya Sharma"
+                 class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm bg-stone-50/50">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Mobile / WhatsApp Number *</label>
+          <input type="tel" id="bookingPhone" required placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number"
+                 class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm bg-stone-50/50">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Select Desired Service *</label>
+          <select id="bookingServiceSelect" required class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm bg-stone-50/50">
+            <!-- Options dynamically populated -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">Preferred Date *</label>
+            <input type="date" id="bookingDate" required class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm bg-stone-50/50">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">Time Slot *</label>
+            <div class="grid grid-cols-1 gap-1.5">
+              <button type="button" onclick="selectTimeSlot(this, '09:30 AM (Morning)')" class="time-slot-btn py-1.5 px-2 rounded-lg border border-stone-200 text-[11px] font-medium text-stone-700 text-left hover:bg-stone-50">🌅 Morning (09:30 AM)</button>
+              <button type="button" onclick="selectTimeSlot(this, '01:30 PM (Afternoon)')" class="time-slot-btn py-1.5 px-2 rounded-lg border border-amber-600 bg-amber-600 text-white text-[11px] font-medium text-left">☀️ Afternoon (01:30 PM)</button>
+              <button type="button" onclick="selectTimeSlot(this, '05:30 PM (Evening)')" class="time-slot-btn py-1.5 px-2 rounded-lg border border-stone-200 text-[11px] font-medium text-stone-700 text-left hover:bg-stone-50">🌆 Evening (05:30 PM)</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Special Requests / Notes (Optional)</label>
+          <textarea id="bookingNotes" rows="2" placeholder="Skin allergies, specific beautician preference, etc." class="w-full px-4 py-2 rounded-xl border border-stone-200 text-xs bg-stone-50/50"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-rose-gold-gradient hover:opacity-95 text-slate-950 font-bold py-3.5 rounded-xl shadow-lg transition-all text-sm mt-2 flex items-center justify-center space-x-2">
+          <i class="fas fa-check-circle"></i>
+          <span>Confirm & Lock Appointment</span>
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- BOOKING CONFIRMATION POPUP MODAL -->
+  <div id="confirmationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border border-amber-300 space-y-4">
+      <div class="w-16 h-16 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl">
+        <i class="fas fa-check-circle"></i>
+      </div>
+
+      <h3 class="font-heading text-2xl font-bold text-slate-950">Appointment Confirmed!</h3>
+      <p class="text-xs text-stone-600">Your pampering slot has been reserved at B2B (Best of Beauty). We have logged your request in our real-time system.</p>
+
+      <div id="confirmDetailsContainer">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div class="pt-2 flex flex-col space-y-2">
+        <a id="confirmWhatsappShareBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-md">
+          <i class="fab fa-whatsapp text-lg"></i>
+          <span>Send Confirmation to WhatsApp</span>
+        </a>
+        <button onclick="closeConfirmationModal()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold py-2.5 rounded-xl text-xs">
+          Close Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🛒 CART SLIDE-OVER DRAWER -->
+  <div id="cartOverlay" onclick="toggleCartDrawer()" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden transition-opacity"></div>
+  <div id="cartDrawer" class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+
+    <div class="p-5 border-b border-stone-200 flex items-center justify-between bg-blush-50">
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-shopping-bag text-rosegold-700"></i>
+        <h3 class="font-bold text-slate-950 text-base">Your Pampering Cart</h3>
+      </div>
+      <button onclick="toggleCartDrawer()" class="text-stone-400 hover:text-stone-800 p-1">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Items List -->
+    <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-5 space-y-3">
+      <!-- Injected via app.js -->
+    </div>
+
+    <!-- Cart Footer -->
+    <div class="p-5 border-t border-stone-200 bg-stone-50 space-y-3">
+      <div class="flex justify-between text-sm text-stone-600">
+        <span>Subtotal</span>
+        <span id="cartSubtotalAmount" class="font-bold text-stone-900">₹0</span>
+      </div>
+      <div class="flex justify-between text-base font-bold text-slate-950 border-t border-stone-200 pt-2">
+        <span>Total Amount</span>
+        <span id="cartTotalAmount" class="text-rosegold-700">₹0</span>
+      </div>
+      <button onclick="openCheckoutModal()" class="w-full bg-rose-gold-gradient hover:opacity-95 text-slate-950 font-bold py-3.5 rounded-xl shadow-md text-sm transition-all flex items-center justify-center space-x-2">
+        <span>Proceed to Checkout</span>
+        <i class="fas fa-arrow-right text-xs"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- CHECKOUT MODAL FOR E-COMMERCE -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-stone-200 relative">
+
+      <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-800 text-lg p-2">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <h3 class="font-heading text-2xl font-bold text-slate-950 mb-4">Complete Product Order</h3>
+
+      <form onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Full Name *</label>
+          <input type="text" id="checkoutName" required placeholder="e.g. Priya Roy" class="w-full px-4 py-2 rounded-xl border border-stone-200 text-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Mobile / WhatsApp Number *</label>
+          <input type="tel" id="checkoutPhone" required placeholder="e.g. 9876543210" pattern="[0-9]{10}" class="w-full px-4 py-2 rounded-xl border border-stone-200 text-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Delivery Address *</label>
+          <textarea id="checkoutAddress" required rows="2" placeholder="Full home/office address for product delivery" class="w-full px-4 py-2 rounded-xl border border-stone-200 text-xs"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Payment Method</label>
+          <select id="checkoutPayment" class="w-full px-4 py-2 rounded-xl border border-stone-200 text-sm">
+            <option value="UPI / WhatsApp Pay">UPI / PhonePe / WhatsApp Pay</option>
+            <option value="Credit/Debit Card">Credit / Debit Card</option>
+            <option value="Cash at Parlour / COD">Cash on Delivery / Parlour Pickup</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-slate-950 hover:bg-slate-800 text-amber-300 font-bold py-3.5 rounded-xl shadow-lg transition-all text-sm mt-2">
+          Place Product Order
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- 🔔 5. OWNER NOTIFICATION & ADMIN DASHBOARD MODAL -->
+  <div id="adminDashboardModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl border border-rosegold-500/30 relative max-h-[92vh] flex flex-col">
+
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-950 text-amber-300 flex items-center justify-center text-lg shadow">
+            <i class="fas fa-crown"></i>
+          </div>
+          <div>
+            <h3 class="font-heading text-xl font-bold text-slate-950">B2B Owner Admin Panel</h3>
+            <span class="text-xs text-emerald-600 font-medium flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Real-Time Live SSE Connected</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <!-- Export to Excel Button -->
+          <a href="/api/export/excel" download="B2B_Beauty_Bookings.xlsx" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center space-x-2 shadow-sm transition-all">
+            <i class="fas fa-file-excel text-sm"></i>
+            <span class="hidden sm:inline">Export to Excel</span>
+          </a>
+
+          <button onclick="toggleAdminModal()" class="text-stone-400 hover:text-stone-800 p-2 text-xl">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-3 gap-3 my-4">
+        <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl text-center">
+          <span class="text-[11px] text-stone-500 uppercase font-bold tracking-wider block">Total Revenue</span>
+          <span id="adminStatRevenue" class="text-lg font-bold text-amber-800">₹0</span>
+        </div>
+        <div class="p-3 bg-blue-50/70 border border-blue-200 rounded-2xl text-center">
+          <span class="text-[11px] text-stone-500 uppercase font-bold tracking-wider block">Booked Sessions</span>
+          <span id="adminStatAppts" class="text-lg font-bold text-blue-800">0</span>
+        </div>
+        <div class="p-3 bg-rose-50/70 border border-rose-200 rounded-2xl text-center">
+          <span class="text-[11px] text-stone-500 uppercase font-bold tracking-wider block">Pending Requests</span>
+          <span id="adminStatPending" class="text-lg font-bold text-rose-800">0</span>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="flex space-x-4 border-b border-stone-200 text-xs font-bold mb-4">
+        <button id="btnAdminTabAppts" onclick="switchAdminTab('appts')" class="py-2.5 px-4 border-b-2 border-amber-600 text-amber-600 flex items-center space-x-2">
+          <i class="far fa-calendar-check"></i>
+          <span>Appointments Queue</span>
+        </button>
+        <button id="btnAdminTabOrders" onclick="switchAdminTab('orders')" class="py-2.5 px-4 border-b-2 border-transparent text-stone-500 hover:text-stone-800 flex items-center space-x-2">
+          <i class="fas fa-shopping-bag"></i>
+          <span>Product Orders</span>
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Appointments -->
+      <div id="adminApptsTab" class="flex-1 overflow-y-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-stone-100 text-[11px] font-bold text-stone-600 uppercase tracking-wider">
+              <th class="p-3 rounded-l-xl">ID</th>
+              <th class="p-3">Customer Info</th>
+              <th class="p-3">Service & Price</th>
+              <th class="p-3">Date & Slot</th>
+              <th class="p-3">Status</th>
+              <th class="p-3 rounded-r-xl">Quick Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminApptsTableBody">
+            <!-- Injected dynamically via app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab Content 2: Product Orders -->
+      <div id="adminOrdersTab" class="flex-1 overflow-y-auto hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-stone-100 text-[11px] font-bold text-stone-600 uppercase tracking-wider">
+              <th class="p-3 rounded-l-xl">Order ID</th>
+              <th class="p-3">Customer</th>
+              <th class="p-3">Items & Total</th>
+              <th class="p-3">Payment</th>
+              <th class="p-3">Status</th>
+              <th class="p-3 rounded-r-xl">Contact</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersTableBody">
+            <!-- Injected dynamically via app.js -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTACT & FOOTER SECTION -->
+  <footer id="contact" class="bg-slate-950 text-white pt-16 pb-8 border-t-4 border-rosegold-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-stone-800">
+
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-gold-gradient flex flex-col items-center justify-center text-slate-950 font-extrabold shadow-md">
+            <span class="font-cinzel text-xs font-black tracking-tighter leading-none">B2B</span>
+          </div>
+          <div>
+            <span class="font-cinzel text-xl font-bold tracking-wider text-white block">B2B</span>
+            <span class="text-[8px] uppercase tracking-widest text-amber-300 font-semibold block">Best of Beauty</span>
+          </div>
+        </div>
+        <p class="text-xs text-stone-400 leading-relaxed">
+          The ultimate destination for luxury salon pampering, holistic skin therapy, and high-definition bridal styling.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-amber-300 text-sm mb-3 uppercase tracking-wider">Lounge Hours</h4>
+        <ul class="text-xs text-stone-400 space-y-2">
+          <li class="flex justify-between"><span>Monday - Friday:</span> <span class="text-white">09:00 AM - 08:00 PM</span></li>
+          <li class="flex justify-between"><span>Saturday:</span> <span class="text-white">09:00 AM - 09:00 PM</span></li>
+          <li class="flex justify-between"><span>Sunday:</span> <span class="text-white">10:00 AM - 07:00 PM</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-amber-300 text-sm mb-3 uppercase tracking-wider">Direct Concierge</h4>
+        <ul class="text-xs text-stone-400 space-y-2">
+          <li><i class="fas fa-map-marker-alt text-amber-400 mr-2"></i> 108 Royal Orchid Boulevard, New Delhi</li>
+          <li><i class="fas fa-phone-alt text-amber-400 mr-2"></i> +91 98765 43210 / 011 23456789</li>
+          <li><i class="fas fa-envelope text-amber-400 mr-2"></i> concierge@b2bbeautylounge.com</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-amber-300 text-sm mb-3 uppercase tracking-wider">Quick Links</h4>
+        <div class="flex flex-col space-y-2 text-xs text-stone-400">
+          <a href="#home" class="hover:text-amber-300 transition-colors">Home Banner</a>
+          <a href="#services" class="hover:text-amber-300 transition-colors">Beauty Treatments</a>
+          <a href="#shop" class="hover:text-amber-300 transition-colors">E-Commerce Boutique</a>
+          <a href="javascript:void(0)" onclick="toggleAdminModal()" class="hover:text-amber-300 transition-colors">Owner Admin Access</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 pt-6 text-center text-xs text-stone-500">
+      &copy; 2025 B2B (Best of Beauty). All Rights Reserved. Radiate Beauty, Embrace Confidence.
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>

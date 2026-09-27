@@ -1,0 +1,93 @@
+[
+  {
+    "id": "B2B-1305",
+    "customerName": "Mahendran",
+    "phone": "7904183225",
+    "serviceId": "srv-3",
+    "serviceName": "Bridal & Event Makeover Packages",
+    "price": 7999,
+    "date": "2026-09-28",
+    "timeSlot": "05:30 PM (Evening)",
+    "notes": "",
+    "status": "Confirmed",
+    "createdAt": "2026-09-27T07:17:08.533Z"
+  },
+  {
+    "id": "B2B-6893",
+    "customerName": "Barath",
+    "phone": "7904183225",
+    "serviceId": "srv-3",
+    "serviceName": "Bridal & Event Makeover Packages",
+    "price": 7999,
+    "date": "2025-03-20",
+    "timeSlot": "01:30 PM (Afternoon)",
+    "notes": "Bridal makeover for reception",
+    "status": "Confirmed",
+    "createdAt": "2026-09-27T06:53:57.015Z"
+  },
+  {
+    "id": "B2B-8420",
+    "customerName": "Barath",
+    "phone": "7904183225",
+    "serviceId": "srv-2",
+    "serviceName": "Luxury Glow Facial & Cleanups",
+    "price": 1999,
+    "date": "2025-03-12",
+    "timeSlot": "11:00 AM (Morning)",
+    "notes": "B2B Test",
+    "status": "Confirmed",
+    "createdAt": "2026-09-27T06:43:32.791Z"
+  },
+  {
+    "id": "AURA-4576",
+    "customerName": "Barath",
+    "phone": "7904183225",
+    "serviceId": "srv-2",
+    "serviceName": "Luxury Glow Facial & Cleanups",
+    "price": 1999,
+    "date": "2025-03-12",
+    "timeSlot": "11:00 AM (Morning)",
+    "notes": "Replaced brand name to B2B",
+    "status": "Confirmed",
+    "createdAt": "2026-09-27T06:41:05.917Z"
+  },
+  {
+    "id": "B2B-6574",
+    "customerName": "Barath",
+    "phone": "7904183225",
+    "serviceId": "srv-1",
+    "serviceName": "Hair Styling & Spa",
+    "price": 1499,
+    "date": "2026-09-27",
+    "timeSlot": "01:30 PM (Afternoon)",
+    "notes": "",
+    "status": "Completed",
+    "createdAt": "2026-09-27T06:27:00.660Z"
+  },
+  {
+    "id": "B2B-8901",
+    "customerName": "Priya Sharma",
+    "phone": "9876543210",
+    "serviceId": "srv-2",
+    "serviceName": "Luxury Glow Facial & Cleanups",
+    "price": 1999,
+    "date": "2025-03-05",
+    "timeSlot": "11:00 AM (Morning)",
+    "notes": "Prefers gentle pressure and organic skin products.",
+    "status": "Completed",
+    "createdAt": "2025-03-01T10:15:00.000Z"
+  },
+  {
+    "id": "B2B-8902",
+    "customerName": "Ananya Roy",
+    "phone": "9123456789",
+    "serviceId": "srv-3",
+    "serviceName": "Bridal & Event Makeover Packages",
+    "price": 7999,
+    "date": "2025-03-06",
+    "timeSlot": "02:30 PM (Afternoon)",
+    "notes": "Reception makeup trial session.",
+    "status": "Cancelled",
+    "createdAt": "2025-03-01T11:45:00.000Z"
+  }
+]

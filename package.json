@@ -1,0 +1,30 @@
+{
+  "name": "b2b-best-of-beauty",
+  "version": "1.0.0",
+  "description": "B2B (Best of Beauty) - Premium Beauty Parlour & E-Commerce Web Application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "beauty",
+    "b2b",
+    "best-of-beauty",
+    "salon",
+    "parlour",
+    "spa",
+    "booking",
+    "ecommerce",
+    "express",
+    "tailwindcss"
+  ],
+  "author": "B2B (Best of Beauty) Tech Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^18.0.4",
+    "exceljs": "^4.4.0",
+    "nodemailer": "^10.0.10",
+    "twilio": "^6.1.1"
+  }
+}

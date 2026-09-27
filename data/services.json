@@ -1,0 +1,72 @@
+[
+  {
+    "id": "srv-1",
+    "title": "Hair Styling & Spa",
+    "subtitle": "Cut, Color, Keratin & Deep Conditioning",
+    "category": "Hair",
+    "price": 1499,
+    "originalPrice": 1999,
+    "duration": "60 Min",
+    "rating": 4.9,
+    "reviewsCount": 128,
+    "image": "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
+    "description": "Revitalize your locks with precision cutting, premium organic color glossing, and deep Keratin hydration treatment for silky smooth hair.",
+    "popular": true
+  },
+  {
+    "id": "srv-2",
+    "title": "Luxury Glow Facial & Cleanups",
+    "subtitle": "Hydra-Peel, Vitamin C Glow & Anti-Aging Massage",
+    "category": "Facial",
+    "price": 1999,
+    "originalPrice": 2499,
+    "duration": "75 Min",
+    "rating": 5.0,
+    "reviewsCount": 210,
+    "image": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
+    "description": "Rejuvenate your skin with our signature 7-step radiance facial, deep pore cleanup, oxygen boost infusion, and relaxing jade roller massage.",
+    "popular": true
+  },
+  {
+    "id": "srv-3",
+    "title": "Bridal & Event Makeover Packages",
+    "subtitle": "HD Airbrush Makeup, Hairstyling & Draping",
+    "category": "Bridal",
+    "price": 7999,
+    "originalPrice": 9999,
+    "duration": "180 Min",
+    "rating": 5.0,
+    "reviewsCount": 95,
+    "image": "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80",
+    "description": "Exquisite bridal glow transformations with waterproof HD/Airbrush makeup, floral hair art, outfit draping, and complimentary trial session.",
+    "popular": true
+  },
+  {
+    "id": "srv-4",
+    "title": "Manicure & Pedicure Spa",
+    "subtitle": "Rose Petal Soak, Scrub, Gel Polish & Massage",
+    "category": "Nails",
+    "price": 999,
+    "originalPrice": 1299,
+    "duration": "45 Min",
+    "rating": 4.8,
+    "reviewsCount": 164,
+    "image": "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80",
+    "description": "Indulge in an aromatherapy foot soak, exfoliating herbal scrub, nail shaping, gel polish of your choice, and hot oil reflexology.",
+    "popular": false
+  },
+  {
+    "id": "srv-5",
+    "title": "Threading & Skin Care",
+    "subtitle": "Eyebrow Architecture, Upper Lip & Herbal De-Tan",
+    "category": "Skincare",
+    "price": 499,
+    "originalPrice": 699,
+    "duration": "30 Min",
+    "rating": 4.9,
+    "reviewsCount": 310,
+    "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+    "description": "Precise facial hair threading paired with cooling aloe vera gel soothing treatment and organic herbal de-tan pack for soft, clear skin.",
+    "popular": false
+  }
+]

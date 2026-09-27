@@ -1,0 +1,150 @@
+/* B2B (Best of Beauty) - Custom Luxury Styling */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-blush: #FDF6F6;
+  --bg-blush-soft: #F8E7E7;
+  --rose-gold: #C5A059;
+  --rose-gold-bright: #D4AF37;
+  --rose-gold-dark: #9A7831;
+  --dark-slate: #1A1A1A;
+  --text-muted: #5A5656;
+  --card-bg: #FFFFFF;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-blush);
+  color: var(--dark-slate);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Typography Classes */
+.font-heading {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+/* Custom Color Gradients */
+.bg-rose-gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #9A7831 100%);
+}
+
+.text-rose-gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #9A7831 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-blush-gradient {
+  background: linear-gradient(180deg, #FDF6F6 0%, #F8E7E7 100%);
+}
+
+/* Glassmorphism & Card Shadows */
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  box-shadow: 0 10px 30px -5px rgba(197, 160, 89, 0.12);
+}
+
+.glass-card-hover {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(197, 160, 89, 0.28);
+  border-color: rgba(197, 160, 89, 0.6);
+}
+
+/* Pulse Animation for Live Notification Badge */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+.live-pulse-badge {
+  animation: pulse-ring 2s infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FDF6F6;
+}
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9A7831;
+}
+
+/* Hero Overlay Shader */
+.hero-overlay {
+  background: linear-gradient(180deg, rgba(26, 26, 26, 0.65) 0%, rgba(26, 26, 26, 0.45) 50%, rgba(26, 26, 26, 0.8) 100%);
+}
+
+/* Toast Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+
+.animate-slide-out {
+  animation: slideOutRight 0.4s ease-in forwards;
+}
+
+/* Custom Input Focus Glow */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #C5A059 !important;
+  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.25) !important;
+}
+
+/* Badge tags */
+.badge-gold {
+  background-color: rgba(197, 160, 89, 0.15);
+  color: #9A7831;
+  border: 1px solid rgba(197, 160, 89, 0.4);
+}
