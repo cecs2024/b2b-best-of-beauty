@@ -78,19 +78,8 @@
           <span id="cartBadgeCount" class="absolute -top-1.5 -right-1.5 bg-rose-600 text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white hidden">0</span>
         </button>
 
-        <!-- Owner Admin Button -->
-        <button onclick="toggleAdminModal()" class="relative px-3 py-2 rounded-xl bg-stone-900 text-amber-300 hover:bg-stone-800 text-xs font-semibold flex items-center space-x-2 border border-rosegold-600/40 shadow-sm">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-          </span>
-          <i class="fas fa-user-shield text-xs"></i>
-          <span class="hidden sm:inline">Owner Admin</span>
-          <span id="adminNoticeBadge" class="bg-rose-600 text-white font-bold text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
-        </button>
-
         <!-- Book CTA Button -->
-        <button onclick="openBookingModalForService()" class="hidden sm:flex bg-rose-gold-gradient hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all items-center space-x-2">
+        <button onclick="openBookingModalForService()" class="bg-rose-gold-gradient hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center space-x-2">
           <i class="far fa-calendar-check text-xs"></i>
           <span>Book Appointment</span>
         </button>
@@ -458,107 +447,6 @@
     </div>
   </div>
 
-  <!-- 🔔 5. OWNER NOTIFICATION & ADMIN DASHBOARD MODAL -->
-  <div id="adminDashboardModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl border border-rosegold-500/30 relative max-h-[92vh] flex flex-col">
-
-      <!-- Top Bar -->
-      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-slate-950 text-amber-300 flex items-center justify-center text-lg shadow">
-            <i class="fas fa-crown"></i>
-          </div>
-          <div>
-            <h3 class="font-heading text-xl font-bold text-slate-950">B2B Owner Admin Panel</h3>
-            <span class="text-xs text-emerald-600 font-medium flex items-center space-x-1">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Real-Time Live SSE Connected</span>
-            </span>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-3">
-          <!-- Export to Excel Button -->
-          <a href="/api/export/excel" download="B2B_Beauty_Bookings.xlsx" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center space-x-2 shadow-sm transition-all">
-            <i class="fas fa-file-excel text-sm"></i>
-            <span class="hidden sm:inline">Export to Excel</span>
-          </a>
-
-          <button onclick="toggleAdminModal()" class="text-stone-400 hover:text-stone-800 p-2 text-xl">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Quick Metrics Grid -->
-      <div class="grid grid-cols-3 gap-3 my-4">
-        <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl text-center">
-          <span class="text-[11px] text-stone-500 uppercase font-bold tracking-wider block">Total Revenue</span>
-          <span id="adminStatRevenue" class="text-lg font-bold text-amber-800">₹0</span>
-        </div>
-        <div class="p-3 bg-blue-50/70 border border-blue-200 rounded-2xl text-center">
-          <span class="text-[11px] text-stone-500 uppercase font-bold tracking-wider block">Booked Sessions</span>
-          <span id="adminStatAppts" class="text-lg font-bold text-blue-800">0</span>
-        </div>
-        <div class="p-3 bg-rose-50/70 border border-rose-200 rounded-2xl text-center">
-          <span class="text-[11px] text-stone-500 uppercase font-bold tracking-wider block">Pending Requests</span>
-          <span id="adminStatPending" class="text-lg font-bold text-rose-800">0</span>
-        </div>
-      </div>
-
-      <!-- Tabs Navigation -->
-      <div class="flex space-x-4 border-b border-stone-200 text-xs font-bold mb-4">
-        <button id="btnAdminTabAppts" onclick="switchAdminTab('appts')" class="py-2.5 px-4 border-b-2 border-amber-600 text-amber-600 flex items-center space-x-2">
-          <i class="far fa-calendar-check"></i>
-          <span>Appointments Queue</span>
-        </button>
-        <button id="btnAdminTabOrders" onclick="switchAdminTab('orders')" class="py-2.5 px-4 border-b-2 border-transparent text-stone-500 hover:text-stone-800 flex items-center space-x-2">
-          <i class="fas fa-shopping-bag"></i>
-          <span>Product Orders</span>
-        </button>
-      </div>
-
-      <!-- Tab Content 1: Appointments -->
-      <div id="adminApptsTab" class="flex-1 overflow-y-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-stone-100 text-[11px] font-bold text-stone-600 uppercase tracking-wider">
-              <th class="p-3 rounded-l-xl">ID</th>
-              <th class="p-3">Customer Info</th>
-              <th class="p-3">Service & Price</th>
-              <th class="p-3">Date & Slot</th>
-              <th class="p-3">Status</th>
-              <th class="p-3 rounded-r-xl">Quick Action</th>
-            </tr>
-          </thead>
-          <tbody id="adminApptsTableBody">
-            <!-- Injected dynamically via app.js -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Tab Content 2: Product Orders -->
-      <div id="adminOrdersTab" class="flex-1 overflow-y-auto hidden">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-stone-100 text-[11px] font-bold text-stone-600 uppercase tracking-wider">
-              <th class="p-3 rounded-l-xl">Order ID</th>
-              <th class="p-3">Customer</th>
-              <th class="p-3">Items & Total</th>
-              <th class="p-3">Payment</th>
-              <th class="p-3">Status</th>
-              <th class="p-3 rounded-r-xl">Contact</th>
-            </tr>
-          </thead>
-          <tbody id="adminOrdersTableBody">
-            <!-- Injected dynamically via app.js -->
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-  </div>
-
   <!-- CONTACT & FOOTER SECTION -->
   <footer id="contact" class="bg-slate-950 text-white pt-16 pb-8 border-t-4 border-rosegold-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-stone-800">
@@ -602,7 +490,9 @@
           <a href="#home" class="hover:text-amber-300 transition-colors">Home Banner</a>
           <a href="#services" class="hover:text-amber-300 transition-colors">Beauty Treatments</a>
           <a href="#shop" class="hover:text-amber-300 transition-colors">E-Commerce Boutique</a>
-          <a href="javascript:void(0)" onclick="toggleAdminModal()" class="hover:text-amber-300 transition-colors">Owner Admin Access</a>
+          <a href="/admin" class="hover:text-amber-300 transition-colors opacity-60 text-[11px] mt-4 block">
+            <i class="fas fa-lock text-[10px] mr-1"></i> Staff / Admin Login
+          </a>
         </div>
       </div>
 

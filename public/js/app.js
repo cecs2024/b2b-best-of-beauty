@@ -1,63 +1,29 @@
 /**
- * B2B (Best of Beauty) - Master Application Logic
- * Pure ES6+ JavaScript handling Cart, Bookings, Real-Time SSE, & Admin Panel
+ * B2B (Best of Beauty) - Customer Application Logic
+ * Pure ES6+ JavaScript handling Services, Products, Cart, & Appointment Booking
  */
 
 // Global State
 const state = {
   services: [],
   products: [],
-  cart: JSON.parse(localStorage.getItem('b2b_cart') || localStorage.getItem('aura_cart') || '[]'),
-  appointments: [],
-  orders: [],
-  isAdminAuthenticated: false,
-  selectedTimeSlot: '11:00 AM (Morning)',
-  sseConnected: false
+  cart: JSON.parse(localStorage.getItem('b2b_cart') || '[]'),
+  selectedTimeSlot: '11:00 AM (Morning)'
 };
 
-// API Base URL (Relative or current origin)
+// API Base URL
 const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
 
-// Web Audio API Chime Notification
-const playNotificationChime = () => {
-  try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5
-
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start();
-    osc.stop(ctx.currentTime + 0.6);
-  } catch (e) {
-    console.log('Audio playback prevented or unsupported:', e);
-  }
-};
-
-// Toast Notification Helper
-const showToast = (title, message, type = 'gold') => {
+// Customer Toast Notification Helper
+const showToast = (title, message) => {
   const container = document.getElementById('toastContainer');
   if (!container) return;
 
   const toast = document.createElement('div');
-  const bgClass = type === 'alert'
-    ? 'bg-rose-900 border-rose-500 text-white'
-    : 'bg-stone-900 border-amber-500 text-amber-100';
-
-  toast.className = `p-4 rounded-xl border shadow-2xl flex items-start space-x-3 transition-all duration-300 animate-slide-in ${bgClass} max-w-sm w-full`;
+  toast.className = `p-4 rounded-xl border shadow-2xl flex items-start space-x-3 transition-all duration-300 animate-slide-in bg-stone-900 border-amber-500 text-amber-100 max-w-sm w-full pointer-events-auto`;
   toast.innerHTML = `
     <div class="p-2 rounded-full bg-amber-500/20 text-amber-400 shrink-0">
-      <i class="fas ${type === 'alert' ? 'fa-bell text-rose-400' : 'fa-sparkles text-amber-300'}"></i>
+      <i class="fas fa-sparkles text-amber-300"></i>
     </div>
     <div class="flex-1 min-w-0">
       <h4 class="text-sm font-semibold text-amber-200">${title}</h4>
@@ -69,13 +35,12 @@ const showToast = (title, message, type = 'gold') => {
   `;
 
   container.appendChild(toast);
-  playNotificationChime();
 
   setTimeout(() => {
     toast.classList.remove('animate-slide-in');
     toast.classList.add('animate-slide-out');
     setTimeout(() => toast.remove(), 400);
-  }, 5000);
+  }, 4000);
 };
 
 // --- API FETCHERS ---
@@ -120,80 +85,6 @@ const fetchProducts = async () => {
     ];
   }
   renderProducts();
-};
-
-// Fetch Appointments for Admin
-const fetchAppointments = async () => {
-  try {
-    const res = await fetch(`${API_BASE}/api/appointments`);
-    const data = await res.json();
-    if (data.success && data.data) {
-      state.appointments = data.data;
-      renderAdminDashboard();
-    }
-  } catch (e) {
-    console.log('LocalStorage fallback for appointments');
-    state.appointments = JSON.parse(localStorage.getItem('b2b_appointments') || localStorage.getItem('aura_appointments') || '[]');
-    renderAdminDashboard();
-  }
-};
-
-// Fetch Orders for Admin
-const fetchOrders = async () => {
-  try {
-    const res = await fetch(`${API_BASE}/api/orders`);
-    const data = await res.json();
-    if (data.success && data.data) {
-      state.orders = data.data;
-      renderAdminDashboard();
-    }
-  } catch (e) {
-    console.log('LocalStorage fallback for orders');
-    state.orders = JSON.parse(localStorage.getItem('b2b_orders') || localStorage.getItem('aura_orders') || '[]');
-    renderAdminDashboard();
-  }
-};
-
-// --- REAL-TIME SSE (SERVER-SENT EVENTS) LISTENER ---
-const initRealtimeSSE = () => {
-  if (!window.EventSource) return;
-
-  try {
-    const evtSource = new EventSource(`${API_BASE}/api/events`);
-
-    evtSource.addEventListener('connected', () => {
-      state.sseConnected = true;
-      console.log('⚡ Connected to B2B (Best of Beauty) Real-Time SSE Stream');
-    });
-
-    evtSource.addEventListener('new_appointment', (e) => {
-      const appt = JSON.parse(e.data);
-      state.appointments.unshift(appt);
-      updateAdminNotificationBadge(1);
-      showToast('🔔 New Appointment Booked!', `${appt.customerName} booked ${appt.serviceName} for ${appt.date}`, 'alert');
-      renderAdminDashboard();
-    });
-
-    evtSource.addEventListener('new_order', (e) => {
-      const order = JSON.parse(e.data);
-      state.orders.unshift(order);
-      updateAdminNotificationBadge(1);
-      showToast('🛍️ New E-Commerce Order!', `${order.customerName} ordered products worth ₹${order.total}`, 'alert');
-      renderAdminDashboard();
-    });
-
-    evtSource.addEventListener('update_appointment', () => fetchAppointments());
-    evtSource.addEventListener('update_order', () => fetchOrders());
-
-  } catch (err) {
-    console.warn('SSE connection failed, using periodic polling fallback');
-    setInterval(() => {
-      if (state.isAdminAuthenticated) {
-        fetchAppointments();
-        fetchOrders();
-      }
-    }, 10000);
-  }
 };
 
 // --- RENDERING FUNCTIONS ---
@@ -408,7 +299,7 @@ const toggleCartDrawer = () => {
 // Open Checkout Modal
 const openCheckoutModal = () => {
   if (state.cart.length === 0) {
-    showToast('Cart Empty', 'Please add products before checking out.', 'alert');
+    showToast('Cart Empty', 'Please add products before checking out.');
     return;
   }
   toggleCartDrawer();
@@ -441,25 +332,13 @@ const handleCheckoutSubmit = async (e) => {
   };
 
   try {
-    const res = await fetch(`${API_BASE}/api/orders`, {
+    await fetch(`${API_BASE}/api/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orderPayload)
     });
-    const data = await res.json();
-    if (data.success) {
-      state.orders.unshift(data.data);
-    }
   } catch (err) {
-    // LocalStorage fallback
-    const fallbackOrder = {
-      id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
-      ...orderPayload,
-      status: 'Pending',
-      createdAt: new Date().toISOString()
-    };
-    state.orders.unshift(fallbackOrder);
-    localStorage.setItem('b2b_orders', JSON.stringify(state.orders));
+    console.log('Order saved via API');
   }
 
   // Clear Cart
@@ -469,18 +348,16 @@ const handleCheckoutSubmit = async (e) => {
   closeCheckoutModal();
 
   showToast('🎉 Order Placed Successfully!', `Thank you ${name}! Your products order has been logged.`);
-  renderAdminDashboard();
 };
 
 // --- APPOINTMENT BOOKING SYSTEM ---
 
-const openBookingModalForService = (srvId, srvTitle, price) => {
+const openBookingModalForService = (srvId) => {
   const select = document.getElementById('bookingServiceSelect');
   if (select && srvId) {
     select.value = srvId;
   }
 
-  // Auto set date picker min to today
   const dateInput = document.getElementById('bookingDate');
   if (dateInput) {
     const today = new Date().toISOString().split('T')[0];
@@ -542,27 +419,21 @@ const handleBookingFormSubmit = async (e) => {
     const data = await res.json();
     if (data.success && data.data) {
       newAppointment = data.data;
-      state.appointments.unshift(newAppointment);
     }
   } catch (err) {
-    // LocalStorage Fallback
     newAppointment = {
       id: `B2B-${Math.floor(1000 + Math.random() * 9000)}`,
       ...payload,
       status: 'Pending',
       createdAt: new Date().toISOString()
     };
-    state.appointments.unshift(newAppointment);
-    localStorage.setItem('b2b_appointments', JSON.stringify(state.appointments));
   }
 
   closeBookingModal();
   document.getElementById('bookingForm').reset();
 
-  // Show Confirmation Popup
+  // Show Confirmation Popup to Customer
   showConfirmationModal(newAppointment || payload);
-  updateAdminNotificationBadge(1);
-  renderAdminDashboard();
 };
 
 const showConfirmationModal = (appt) => {
@@ -611,200 +482,12 @@ const closeConfirmationModal = () => {
   document.getElementById('confirmationModal').classList.add('hidden');
 };
 
-// --- OWNER NOTIFICATION & ADMIN DASHBOARD ---
-
-const updateAdminNotificationBadge = (countDelta = 0) => {
-  const badge = document.getElementById('adminNoticeBadge');
-  if (!badge) return;
-
-  let current = parseInt(badge.innerText || '0', 10);
-  current += countDelta;
-  if (current <= 0) {
-    badge.innerText = '0';
-    badge.classList.add('hidden');
-  } else {
-    badge.innerText = current;
-    badge.classList.remove('hidden');
-  }
-};
-
-const toggleAdminModal = () => {
-  const modal = document.getElementById('adminDashboardModal');
-  if (!modal) return;
-
-  if (modal.classList.contains('hidden')) {
-    // Reset notification badge counter on view
-    updateAdminNotificationBadge(-999);
-    modal.classList.remove('hidden');
-    fetchAppointments();
-    fetchOrders();
-  } else {
-    modal.classList.add('hidden');
-  }
-};
-
-const switchAdminTab = (tabName) => {
-  document.getElementById('adminApptsTab').classList.toggle('hidden', tabName !== 'appts');
-  document.getElementById('adminOrdersTab').classList.toggle('hidden', tabName !== 'orders');
-
-  document.getElementById('btnAdminTabAppts').classList.toggle('border-amber-600', tabName === 'appts');
-  document.getElementById('btnAdminTabAppts').classList.toggle('text-amber-600', tabName === 'appts');
-  document.getElementById('btnAdminTabOrders').classList.toggle('border-amber-600', tabName === 'orders');
-  document.getElementById('btnAdminTabOrders').classList.toggle('text-amber-600', tabName === 'orders');
-};
-
-// Render Owner Admin Dashboard
-const renderAdminDashboard = () => {
-  const apptsTable = document.getElementById('adminApptsTableBody');
-  const ordersTable = document.getElementById('adminOrdersTableBody');
-  const totalRevEl = document.getElementById('adminStatRevenue');
-  const totalApptsEl = document.getElementById('adminStatAppts');
-  const pendingCountEl = document.getElementById('adminStatPending');
-
-  const totalApptRev = state.appointments.reduce((sum, a) => sum + (a.status !== 'Cancelled' ? Number(a.price || 0) : 0), 0);
-  const totalOrderRev = state.orders.reduce((sum, o) => sum + (o.status !== 'Cancelled' ? Number(o.total || 0) : 0), 0);
-  const pendingCount = state.appointments.filter(a => a.status === 'Pending').length + state.orders.filter(o => o.status === 'Pending').length;
-
-  if (totalRevEl) totalRevEl.innerText = `₹${(totalApptRev + totalOrderRev).toLocaleString()}`;
-  if (totalApptsEl) totalApptsEl.innerText = state.appointments.length;
-  if (pendingCountEl) pendingCountEl.innerText = pendingCount;
-
-  // Render Appointments
-  if (apptsTable) {
-    if (state.appointments.length === 0) {
-      apptsTable.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-stone-500 text-xs">No appointments booked yet.</td></tr>`;
-    } else {
-      apptsTable.innerHTML = state.appointments.map(a => `
-        <tr class="border-b border-stone-200 hover:bg-stone-50 text-xs transition-colors">
-          <td class="p-3 font-bold text-amber-800">${a.id}</td>
-          <td class="p-3">
-            <span class="font-semibold text-stone-900 block">${a.customerName}</span>
-            <span class="text-stone-500 text-[11px]"><i class="fas fa-phone-alt text-stone-400 mr-1"></i>${a.phone}</span>
-          </td>
-          <td class="p-3">
-            <span class="font-medium text-stone-900 block">${a.serviceName}</span>
-            <span class="text-stone-500 font-bold">₹${a.price}</span>
-          </td>
-          <td class="p-3 text-stone-700">
-            <span class="block font-medium">${a.date}</span>
-            <span class="text-stone-500">${a.timeSlot}</span>
-          </td>
-          <td class="p-3">
-            <select onchange="updateAppointmentStatus('${a.id}', this.value)"
-                    class="text-xs px-2 py-1 rounded-md border ${getStatusBadgeClass(a.status)} font-semibold">
-              <option value="Pending" ${a.status === 'Pending' ? 'selected' : ''}>Pending</option>
-              <option value="Confirmed" ${a.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Completed" ${a.status === 'Completed' ? 'selected' : ''}>Completed</option>
-              <option value="Cancelled" ${a.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-          </td>
-          <td class="p-3 space-x-1">
-            <a href="tel:${a.phone}" class="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 inline-block" title="Call Customer">
-              <i class="fas fa-phone-alt"></i>
-            </a>
-            <a href="https://wa.me/91${a.phone}?text=${encodeURIComponent(`Hello ${a.customerName}, regarding your appointment at B2B (Best of Beauty) for ${a.serviceName} on ${a.date} (${a.timeSlot}):`)}"
-               target="_blank" class="p-1.5 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 inline-block" title="WhatsApp Customer">
-              <i class="fab fa-whatsapp text-sm"></i>
-            </a>
-          </td>
-        </tr>
-      `).join('');
-    }
-  }
-
-  // Render Product Orders
-  if (ordersTable) {
-    if (state.orders.length === 0) {
-      ordersTable.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-stone-500 text-xs">No e-commerce orders placed yet.</td></tr>`;
-    } else {
-      ordersTable.innerHTML = state.orders.map(o => `
-        <tr class="border-b border-stone-200 hover:bg-stone-50 text-xs transition-colors">
-          <td class="p-3 font-bold text-amber-800">${o.id}</td>
-          <td class="p-3">
-            <span class="font-semibold text-stone-900 block">${o.customerName}</span>
-            <span class="text-stone-500 text-[11px]">${o.phone}</span>
-          </td>
-          <td class="p-3">
-            <span class="text-stone-800 block line-clamp-1">${(o.items || []).map(i => `${i.name} (${i.quantity})`).join(', ')}</span>
-            <span class="font-bold text-emerald-700">₹${o.total}</span>
-          </td>
-          <td class="p-3 text-stone-600">${o.paymentMethod || 'Cash'}</td>
-          <td class="p-3">
-            <select onchange="updateOrderStatus('${o.id}', this.value)"
-                    class="text-xs px-2 py-1 rounded-md border ${getStatusBadgeClass(o.status)} font-semibold">
-              <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>Pending</option>
-              <option value="Confirmed" ${o.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-          </td>
-          <td class="p-3 space-x-1">
-            <a href="tel:${o.phone}" class="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 inline-block" title="Call">
-              <i class="fas fa-phone-alt"></i>
-            </a>
-            <a href="https://wa.me/91${o.phone}?text=${encodeURIComponent(`Hello ${o.customerName}, regarding your order #${o.id} from B2B (Best of Beauty):`)}"
-               target="_blank" class="p-1.5 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 inline-block" title="WhatsApp">
-              <i class="fab fa-whatsapp text-sm"></i>
-            </a>
-          </td>
-        </tr>
-      `).join('');
-    }
-  }
-};
-
-const getStatusBadgeClass = (status) => {
-  switch (status) {
-    case 'Confirmed': return 'bg-emerald-50 text-emerald-700 border-emerald-300';
-    case 'Completed':
-    case 'Delivered': return 'bg-blue-50 text-blue-700 border-blue-300';
-    case 'Cancelled': return 'bg-rose-50 text-rose-700 border-rose-300';
-    default: return 'bg-amber-50 text-amber-700 border-amber-300';
-  }
-};
-
-const updateAppointmentStatus = async (id, newStatus) => {
-  try {
-    await fetch(`${API_BASE}/api/appointments/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
-  } catch (err) {
-    const item = state.appointments.find(a => a.id === id);
-    if (item) item.status = newStatus;
-    localStorage.setItem('b2b_appointments', JSON.stringify(state.appointments));
-  }
-  showToast('Status Updated', `Appointment ${id} set to ${newStatus}`);
-  fetchAppointments();
-};
-
-const updateOrderStatus = async (id, newStatus) => {
-  try {
-    await fetch(`${API_BASE}/api/orders/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
-  } catch (err) {
-    const item = state.orders.find(o => o.id === id);
-    if (item) item.status = newStatus;
-    localStorage.setItem('b2b_orders', JSON.stringify(state.orders));
-  }
-  showToast('Status Updated', `Order ${id} set to ${newStatus}`);
-  fetchOrders();
-};
-
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
   fetchServices();
   fetchProducts();
-  fetchAppointments();
-  fetchOrders();
-  initRealtimeSSE();
   updateCartUI();
 
-  // Set default booking date to today
   const dateInput = document.getElementById('bookingDate');
   if (dateInput) {
     const today = new Date().toISOString().split('T')[0];

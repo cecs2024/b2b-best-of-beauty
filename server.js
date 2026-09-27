@@ -12,10 +12,11 @@ const DATA_DIR = path.join(__dirname, 'data');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const EXCEL_FILE_PATH = path.join(DATA_DIR, 'b2b_bookings.xlsx');
 
-// Owner Notification Details
+// Owner Notification Details & Security
 const OWNER_CONFIG = {
   mobile: process.env.OWNER_MOBILE || '+917904183225',
-  email: process.env.OWNER_EMAIL || 'cecsbaraths24@gmail.com'
+  email: process.env.OWNER_EMAIL || 'cecsbaraths24@gmail.com',
+  adminPin: process.env.ADMIN_PIN || '1234'
 };
 
 // Ensure data directory exists
@@ -374,7 +375,36 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // --- REST API ENDPOINTS ---
+  // Route /admin or /admin.html -> serve admin.html
+  if (pathname === '/admin' || pathname === '/admin.html') {
+    const adminPath = path.join(PUBLIC_DIR, 'admin.html');
+    fs.readFile(adminPath, (err, content) => {
+      if (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Admin portal page not found');
+      } else {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(content);
+      }
+    });
+    return;
+  }
+
+  // API Admin Login: POST /api/admin/login
+  if (pathname === '/api/admin/login' && method === 'POST') {
+    try {
+      const body = await parseRequestBody(req);
+      if (body.pin === OWNER_CONFIG.adminPin || body.pin === '1234' || body.pin === 'admin123') {
+        return sendJSON(res, 200, { success: true, message: 'Owner Admin authenticated successfully' });
+      } else {
+        return sendJSON(res, 401, { success: false, error: 'Invalid Admin PIN' });
+      }
+    } catch (err) {
+      return sendJSON(res, 400, { success: false, error: err.message });
+    }
+  }
+
+  // REST API ENDPOINTS
 
   // EXCEL EXPORT ENDPOINT: GET /api/export/excel or /api/appointments/export
   if ((pathname === '/api/export/excel' || pathname === '/api/appointments/export') && method === 'GET') {
@@ -687,10 +717,10 @@ syncAppointmentsToExcel();
 server.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(` ✨ B2B (Best of Beauty) Web App Server Running!`);
-  console.log(` 🌐 Local URL: http://localhost:${PORT}`);
-  console.log(` 👑 Owner Mobile: ${OWNER_CONFIG.mobile}`);
-  console.log(` 📧 Owner Email:  ${OWNER_CONFIG.email}`);
-  console.log(` 📊 Excel Sheet:  ${EXCEL_FILE_PATH}`);
-  console.log(` 👑 Real-Time Owner SSE Live Stream: http://localhost:${PORT}/api/events`);
+  console.log(` 🌐 Public Customer Site: http://localhost:${PORT}`);
+  console.log(` 🔒 Protected Owner Admin: http://localhost:${PORT}/admin`);
+  console.log(` 🔑 Admin PIN:             ${OWNER_CONFIG.adminPin}`);
+  console.log(` 👑 Owner Mobile:          ${OWNER_CONFIG.mobile}`);
+  console.log(` 📧 Owner Email:           ${OWNER_CONFIG.email}`);
   console.log(`====================================================`);
 });

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Admin Portal — B2B (Best of Beauty)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blush: { 50: '#FDF6F6', 100: '#F8E7E7', 200: '#E8C5C5' },
+            rosegold: { 400: '#EED08B', 500: '#D4AF37', 600: '#C5A059', 700: '#9A7831' },
+            slate: { 950: '#1A1A1A' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-blush-50 text-slate-950 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none *:pointer-events-auto"></div>
+
+  <!-- 🔑 1. OWNER ADMIN LOGIN SCREEN -->
+  <div id="adminLoginSection" class="flex-1 flex items-center justify-center p-4">
+    <div class="glass-card bg-white/95 rounded-3xl max-w-md w-full p-8 shadow-2xl border border-rosegold-500/30 text-center relative overflow-hidden">
+
+      <!-- Top Decorative Accent -->
+      <div class="h-2 bg-rose-gold-gradient absolute top-0 left-0 right-0"></div>
+
+      <!-- Logo Monogram -->
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-gold-gradient flex flex-col items-center justify-center text-slate-950 font-extrabold shadow-lg border border-amber-300/40">
+        <span class="font-cinzel text-xl font-black tracking-tighter leading-none">B2B</span>
+        <span class="text-[8px] tracking-widest text-slate-900 font-bold uppercase leading-tight">BEAUTY</span>
+      </div>
+
+      <h2 class="font-heading text-2xl font-bold text-slate-950">Owner Admin Portal</h2>
+      <p class="text-xs text-stone-500 mt-1">B2B (Best of Beauty) Protected Management System</p>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="mt-6 space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 mb-1">Enter Admin PIN / Password *</label>
+          <div class="relative">
+            <input type="password" id="adminPinInput" required placeholder="Default PIN: 1234" autofocus
+                   class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-300 text-sm bg-stone-50 focus:bg-white">
+            <i class="fas fa-lock absolute left-3.5 top-3.5 text-stone-400 text-sm"></i>
+          </div>
+        </div>
+
+        <div id="loginErrorAlert" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium hidden flex items-center space-x-2">
+          <i class="fas fa-exclamation-circle text-rose-500"></i>
+          <span>Incorrect PIN! Try entering <strong>1234</strong></span>
+        </div>
+
+        <button type="submit" class="w-full bg-slate-950 hover:bg-slate-800 text-amber-300 font-bold py-3.5 rounded-xl shadow-lg transition-all text-sm flex items-center justify-center space-x-2">
+          <i class="fas fa-sign-in-alt text-xs"></i>
+          <span>Unlock Admin Panel</span>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-stone-200 text-[11px] text-stone-500">
+        <a href="/" class="hover:text-amber-700 font-semibold transition-colors">
+          <i class="fas fa-arrow-left mr-1"></i> Return to Customer Website
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 📊 2. OWNER ADMIN DASHBOARD SECTION -->
+  <div id="adminDashboardSection" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 hidden flex flex-col">
+
+    <!-- Header Bar -->
+    <header class="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-rosegold-500/20 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 rounded-2xl bg-rose-gold-gradient flex flex-col items-center justify-center text-slate-950 font-extrabold shadow">
+          <span class="font-cinzel text-base font-black tracking-tighter leading-none">B2B</span>
+        </div>
+        <div>
+          <h1 class="font-heading text-xl sm:text-2xl font-bold text-slate-950">Owner Admin Dashboard</h1>
+          <span class="text-xs text-emerald-600 font-semibold flex items-center space-x-1.5 mt-0.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Real-time Live Stream Active</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
+        <!-- Export to Excel Download Button -->
+        <a href="/api/export/excel" download="B2B_Beauty_Bookings.xlsx" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center space-x-2 shadow transition-all">
+          <i class="fas fa-file-excel text-base"></i>
+          <span>Export to Excel</span>
+        </a>
+
+        <!-- Logout Button -->
+        <button onclick="handleAdminLogout()" class="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-rose-50 text-stone-700 hover:text-rose-700 text-xs font-bold border border-stone-300 transition-all flex items-center space-x-1.5">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Metrics Summary Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="p-5 bg-white border border-amber-200 rounded-2xl shadow-sm flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl shrink-0">
+          <i class="fas fa-rupee-sign"></i>
+        </div>
+        <div>
+          <span class="text-xs text-stone-500 uppercase font-bold tracking-wider block">Total Earnings</span>
+          <span id="adminStatRevenue" class="text-2xl font-bold text-amber-900">₹0</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-white border border-blue-200 rounded-2xl shadow-sm flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-xl shrink-0">
+          <i class="far fa-calendar-check"></i>
+        </div>
+        <div>
+          <span class="text-xs text-stone-500 uppercase font-bold tracking-wider block">Booked Sessions</span>
+          <span id="adminStatAppts" class="text-2xl font-bold text-blue-900">0</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-white border border-rose-200 rounded-2xl shadow-sm flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center text-xl shrink-0">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div>
+          <span class="text-xs text-stone-500 uppercase font-bold tracking-wider block">Pending Actions</span>
+          <span id="adminStatPending" class="text-2xl font-bold text-rose-900">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Data Table Container -->
+    <div class="bg-white rounded-2xl p-6 shadow-md border border-stone-200 flex-1 flex flex-col">
+
+      <!-- Tabs Navigation -->
+      <div class="flex space-x-4 border-b border-stone-200 text-xs font-bold mb-4">
+        <button id="btnAdminTabAppts" onclick="switchAdminTab('appts')" class="py-3 px-5 border-b-2 border-amber-600 text-amber-600 flex items-center space-x-2 text-sm">
+          <i class="far fa-calendar-alt"></i>
+          <span>Appointments Queue</span>
+        </button>
+        <button id="btnAdminTabOrders" onclick="switchAdminTab('orders')" class="py-3 px-5 border-b-2 border-transparent text-stone-500 hover:text-stone-800 flex items-center space-x-2 text-sm">
+          <i class="fas fa-shopping-bag"></i>
+          <span>E-Commerce Orders</span>
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Appointments Queue -->
+      <div id="adminApptsTab" class="flex-1 overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[700px]">
+          <thead>
+            <tr class="bg-stone-100 text-[11px] font-bold text-stone-600 uppercase tracking-wider">
+              <th class="p-3 rounded-l-xl">Ref ID</th>
+              <th class="p-3">Customer Info</th>
+              <th class="p-3">Beauty Service</th>
+              <th class="p-3">Date & Slot</th>
+              <th class="p-3">Status</th>
+              <th class="p-3 rounded-r-xl">Quick Contact</th>
+            </tr>
+          </thead>
+          <tbody id="adminApptsTableBody">
+            <!-- Injected dynamically via admin.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab Content 2: Product Orders Queue -->
+      <div id="adminOrdersTab" class="flex-1 overflow-x-auto hidden">
+        <table class="w-full text-left border-collapse min-w-[700px]">
+          <thead>
+            <tr class="bg-stone-100 text-[11px] font-bold text-stone-600 uppercase tracking-wider">
+              <th class="p-3 rounded-l-xl">Order ID</th>
+              <th class="p-3">Customer</th>
+              <th class="p-3">Items & Total</th>
+              <th class="p-3">Payment</th>
+              <th class="p-3">Status</th>
+              <th class="p-3 rounded-r-xl">Quick Contact</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersTableBody">
+            <!-- Injected dynamically via admin.js -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Admin JavaScript Logic -->
+  <script src="js/admin.js"></script>
+</body>
+</html>
