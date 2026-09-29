@@ -14,6 +14,12 @@ const state = {
 // API Base URL
 const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
 
+// Default fetch headers including Ngrok bypass
+const getFetchHeaders = () => ({
+  'Content-Type': 'application/json',
+  'ngrok-skip-browser-warning': 'true'
+});
+
 // Customer Toast Notification Helper
 const showToast = (title, message) => {
   const container = document.getElementById('toastContainer');
@@ -48,7 +54,7 @@ const showToast = (title, message) => {
 // Load Initial Services
 const fetchServices = async () => {
   try {
-    const res = await fetch(`${API_BASE}/api/services`);
+    const res = await fetch(`${API_BASE}/api/services`, { headers: getFetchHeaders() });
     const data = await res.json();
     if (data.success && data.data) {
       state.services = data.data;
@@ -70,7 +76,7 @@ const fetchServices = async () => {
 // Load Initial Products
 const fetchProducts = async () => {
   try {
-    const res = await fetch(`${API_BASE}/api/products`);
+    const res = await fetch(`${API_BASE}/api/products`, { headers: getFetchHeaders() });
     const data = await res.json();
     if (data.success && data.data) {
       state.products = data.data;
@@ -334,7 +340,7 @@ const handleCheckoutSubmit = async (e) => {
   try {
     await fetch(`${API_BASE}/api/orders`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getFetchHeaders(),
       body: JSON.stringify(orderPayload)
     });
   } catch (err) {
@@ -413,7 +419,7 @@ const handleBookingFormSubmit = async (e) => {
   try {
     const res = await fetch(`${API_BASE}/api/appointments`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getFetchHeaders(),
       body: JSON.stringify(payload)
     });
     const data = await res.json();

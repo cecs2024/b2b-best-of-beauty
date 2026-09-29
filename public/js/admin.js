@@ -5,6 +5,11 @@
 
 const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
 
+const getAdminFetchHeaders = () => ({
+  'Content-Type': 'application/json',
+  'ngrok-skip-browser-warning': 'true'
+});
+
 const adminState = {
   appointments: [],
   orders: [],
@@ -93,7 +98,7 @@ const handleAdminLogin = async (e) => {
   try {
     const res = await fetch(`${API_BASE}/api/admin/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminFetchHeaders(),
       body: JSON.stringify({ pin })
     });
     const data = await res.json();
@@ -173,7 +178,7 @@ const initRealtimeSSE = () => {
 
 const fetchAppointments = async () => {
   try {
-    const res = await fetch(`${API_BASE}/api/appointments`);
+    const res = await fetch(`${API_BASE}/api/appointments`, { headers: getAdminFetchHeaders() });
     const data = await res.json();
     if (data.success && data.data) {
       adminState.appointments = data.data;
@@ -187,7 +192,7 @@ const fetchAppointments = async () => {
 
 const fetchOrders = async () => {
   try {
-    const res = await fetch(`${API_BASE}/api/orders`);
+    const res = await fetch(`${API_BASE}/api/orders`, { headers: getAdminFetchHeaders() });
     const data = await res.json();
     if (data.success && data.data) {
       adminState.orders = data.data;
@@ -324,7 +329,7 @@ const updateAppointmentStatus = async (id, newStatus) => {
   try {
     await fetch(`${API_BASE}/api/appointments/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminFetchHeaders(),
       body: JSON.stringify({ status: newStatus })
     });
   } catch (err) {
@@ -338,7 +343,7 @@ const updateOrderStatus = async (id, newStatus) => {
   try {
     await fetch(`${API_BASE}/api/orders/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminFetchHeaders(),
       body: JSON.stringify({ status: newStatus })
     });
   } catch (err) {

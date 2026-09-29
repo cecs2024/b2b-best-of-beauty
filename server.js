@@ -348,13 +348,14 @@ const parseRequestBody = (req) => {
   });
 };
 
-// Send JSON Helper
+// Send JSON Helper with Ngrok Bypass Headers
 const sendJSON = (res, statusCode, data) => {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, ngrok-skip-browser-warning',
+    'ngrok-skip-browser-warning': 'true'
   });
   res.end(JSON.stringify(data));
 };
@@ -370,7 +371,8 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, ngrok-skip-browser-warning',
+      'ngrok-skip-browser-warning': 'true',
       'Access-Control-Max-Age': '86400'
     });
     return res.end();
@@ -384,7 +386,10 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end('Admin portal page not found');
       } else {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.writeHead(200, {
+          'Content-Type': 'text/html',
+          'ngrok-skip-browser-warning': 'true'
+        });
         res.end(content);
       }
     });
@@ -420,7 +425,8 @@ const server = http.createServer(async (req, res) => {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename="B2B_Beauty_Bookings.xlsx"',
         'Content-Length': stat.size,
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'ngrok-skip-browser-warning': 'true'
       });
 
       const readStream = fs.createReadStream(filePath);
@@ -670,7 +676,8 @@ const server = http.createServer(async (req, res) => {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'ngrok-skip-browser-warning': 'true'
     });
 
     res.write(`event: connected\ndata: ${JSON.stringify({ time: new Date().toISOString() })}\n\n`);
@@ -705,7 +712,10 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end('500 Server Internal Error');
       } else {
-        res.writeHead(200, { 'Content-Type': contentType });
+        res.writeHead(200, {
+          'Content-Type': contentType,
+          'ngrok-skip-browser-warning': 'true'
+        });
         res.end(content, 'utf-8');
       }
     });
