@@ -2,38 +2,41 @@
 
 > **"Radiate Beauty, Embrace Confidence — Your Ultimate Pampering & Glow Experience."**
 
-Welcome to **B2B (Best of Beauty)**, a premier, full-stack, responsive web application for a luxury beauty parlour & spa with an integrated e-commerce boutique, real-time owner admin management system, automated WhatsApp (Twilio) & Email (Nodemailer) owner notifications, Excel sheet logging, and **Ngrok Public Gateway Tunnel integration**.
+Welcome to **B2B (Best of Beauty)**, a premier, full-stack, responsive web application for a luxury beauty parlour & spa with an integrated e-commerce boutique, real-time owner admin management system, automated WhatsApp (Twilio) & Email (Nodemailer) owner notifications, Excel sheet logging, and **instant public gateway tunnel integration**.
 
 ---
 
-## 🌐 Ngrok Gateway Tunnel Integration
+## 🚫 How to Eliminate the Ngrok Warning Screen Completely
 
-You can host your local application on the internet instantly and generate a live HTTPS link for your mobile phone using **Ngrok**.
+Standard mobile web browsers show a free-tier warning page when navigating to `*.ngrok-free.app` URLs for the first time. Below are 3 instant free alternatives to bypass or eliminate it completely:
 
-### Option 1: Automatic Ngrok Tunnel via `.env` (Recommended)
-1. Copy your Ngrok authtoken from **[dashboard.ngrok.com/get-started/your-authtoken](https://dashboard.ngrok.com/get-started/your-authtoken)**.
-2. Open `.env` and set `NGROK_AUTHTOKEN`:
-   ```ini
-   NGROK_AUTHTOKEN=your_actual_ngrok_authtoken_here
-   ```
-3. Run `npm start`. `server.js` will automatically launch the Ngrok HTTPS tunnel and output your live mobile URL in the console:
-   ```text
-   ====================================================
-    🚀 NGROK PUBLIC GATEWAY TUNNEL LIVE!
-    📱 Public Customer Link:  https://xxxx-xx-xxx.ngrok-free.app
-    🔒 Protected Owner Admin: https://xxxx-xx-xxx.ngrok-free.app/admin
-   ====================================================
-   ```
-
-### Option 2: Standalone Ngrok CLI
-If you prefer running Ngrok directly from your terminal:
+### 1. Localtunnel (Zero Warning Page!)
+Run this command in your terminal to get an instant HTTPS link with NO warning page:
 ```bash
-# 1. Add your authtoken
-npx ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
-
-# 2. Forward local port 3000
-npx ngrok http 3000
+npx localtunnel --port 3000
 ```
+👉 Gives a clean public link like: `https://b2b-beauty.loca.lt`
+
+---
+
+### 2. Cloudflare Tunnel (Enterprise Free HTTPS, Zero Warning Page!)
+Run Cloudflare's free tunnel in your terminal:
+```bash
+npx cloudflared tunnel --url http://localhost:3000
+```
+👉 Gives an official Cloudflare HTTPS link like: `https://xxxx-xx.trycloudflare.com`
+
+---
+
+### 3. Deploy to Render.com (Permanent Cloud Link, Zero Warning Page!)
+Deploying your repository to **[Render.com](https://dashboard.render.com)** provides a permanent 24/7 cloud URL with **NO warning pages**:
+👉 `https://b2b-best-of-beauty.onrender.com`
+
+---
+
+### 4. If Using Ngrok
+- **On Mobile Browser**: Tap the **"Visit Site"** button once. Ngrok saves a 7-day cookie so it won't appear again on your device.
+- **In Android App WebView**: `MainActivity.kt` automatically injects `ngrok-skip-browser-warning: true` and a custom User-Agent to bypass the screen!
 
 ---
 

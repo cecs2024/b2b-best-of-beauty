@@ -33,11 +33,17 @@ fun B2BBeautyLoungeWebView(url: String) {
                 webViewClient = WebViewClient()
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
-                loadUrl(url)
+                val headers = HashMap<String, String>()
+                headers["ngrok-skip-browser-warning"] = "true"
+                headers["User-Agent"] = "B2BMobileApp/1.0"
+                loadUrl(url, headers)
             }
         },
         update = { webView ->
-            webView.loadUrl(url)
+            val headers = HashMap<String, String>()
+            headers["ngrok-skip-browser-warning"] = "true"
+            headers["User-Agent"] = "B2BMobileApp/1.0"
+            webView.loadUrl(url, headers)
         }
     )
 }
