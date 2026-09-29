@@ -6,6 +6,7 @@ const url = require('url');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const ExcelJS = require('exceljs');
+const ngrok = require('@ngrok/ngrok');
 
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
@@ -714,6 +715,28 @@ const server = http.createServer(async (req, res) => {
 // Initial Excel Sync on server launch
 syncAppointmentsToExcel();
 
+// Start Ngrok Tunnel if NGROK_AUTHTOKEN is configured
+const startNgrokTunnel = async (port) => {
+  const token = process.env.NGROK_AUTHTOKEN;
+  if (!token || token.includes('your_ngrok')) {
+    return;
+  }
+  try {
+    const listener = await ngrok.forward({
+      addr: port,
+      authtoken: token
+    });
+    const publicUrl = listener.url();
+    console.log(`====================================================`);
+    console.log(` 🚀 NGROK PUBLIC GATEWAY TUNNEL ACTIVE!`);
+    console.log(` 📱 Public Customer Link:  ${publicUrl}`);
+    console.log(` 🔒 Protected Owner Admin: ${publicUrl}/admin`);
+    console.log(`====================================================`);
+  } catch (err) {
+    console.error(`❌ [Ngrok Tunnel Error]:`, err.message);
+  }
+};
+
 server.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(` ✨ B2B (Best of Beauty) Web App Server Running!`);
@@ -723,4 +746,6 @@ server.listen(PORT, () => {
   console.log(` 👑 Owner Mobile:          ${OWNER_CONFIG.mobile}`);
   console.log(` 📧 Owner Email:           ${OWNER_CONFIG.email}`);
   console.log(`====================================================`);
+
+  startNgrokTunnel(PORT);
 });
