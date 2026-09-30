@@ -62,58 +62,105 @@ body {
   border-color: rgba(197, 160, 89, 0.6);
 }
 
-/* Modal Overlay & Dialog Card Explicit Styles */
+/* 100% Bulletproof Mobile & Laptop Modal Styling */
 .modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 99999 !important;
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
 }
 
 .modal-dialog-card {
-  position: relative;
-  width: 100%;
-  max-width: 32rem; /* 512px */
-  max-height: 90vh;
-  min-height: auto;
+  position: relative !important;
+  width: 92vw !important;
+  max-width: 500px !important;
+  max-height: 88vh !important;
   background-color: #FFFFFF !important;
-  border-radius: 1.5rem;
-  padding: 1.75rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-  border: 2px solid rgba(197, 160, 89, 0.4);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  border-radius: 1.5rem !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  border: 2px solid #C5A059 !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: block !important;
   color: #1A1A1A !important;
-  z-index: 101;
+  z-index: 100000 !important;
   opacity: 1 !important;
   visibility: visible !important;
+  box-sizing: border-box !important;
+  margin: auto !important;
 }
 
-/* Form controls inside modal */
+@media (min-width: 640px) {
+  .modal-dialog-card {
+    padding: 2rem !important;
+  }
+}
+
+/* Force Form Elements inside Modal to never shrink or hide */
+.modal-dialog-card form {
+  display: block !important;
+  width: 100% !important;
+}
+
+.modal-dialog-card form > div {
+  margin-bottom: 1rem !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+.modal-dialog-card label {
+  display: block !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #2C2B2B !important;
+  margin-bottom: 0.35rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
 .modal-dialog-card input,
 .modal-dialog-card select,
 .modal-dialog-card textarea {
   display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
   width: 100% !important;
+  box-sizing: border-box !important;
   background-color: #FDF6F6 !important;
   color: #1A1A1A !important;
   border: 1px solid #E8C5C5 !important;
+  border-radius: 0.75rem !important;
+  padding: 0.65rem 0.85rem !important;
+  font-size: 0.875rem !important;
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
 }
 
 .modal-dialog-card button[type="submit"] {
   display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  align-items: center !important;
+  justify-content: center !important;
   width: 100% !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 0.75rem !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+  background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #9A7831 100%) !important;
+  color: #1A1A1A !important;
+  margin-top: 1rem !important;
+  border: none !important;
+  cursor: pointer !important;
 }
 
 /* Pulse Animation for Live Notification Badge */
