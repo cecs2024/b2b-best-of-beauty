@@ -782,23 +782,18 @@ syncAppointmentsToExcel();
 // Start Localtunnel for clean public URL with zero warning pages
 const startLocaltunnel = async (port) => {
   try {
-    const tunnel = await localtunnel({ port, subdomain: 'b2b-beauty-sanctuary' });
+    const tunnel = await localtunnel({ port });
     console.log(`====================================================`);
-    console.log(` 🚀 LOCALTUNNEL LIVE (ZERO WARNING PAGES):`);
+    console.log(` 🚀 LOCALTUNNEL LIVE PUBLIC LINK (ZERO WARNINGS):`);
     console.log(` 📱 Public Customer Link:  ${tunnel.url}`);
     console.log(` 🔒 Protected Owner Admin: ${tunnel.url}/admin`);
     console.log(`====================================================`);
-  } catch (e) {
-    try {
-      const tunnel = await localtunnel({ port });
-      console.log(`====================================================`);
-      console.log(` 🚀 LOCALTUNNEL LIVE (ZERO WARNING PAGES):`);
-      console.log(` 📱 Public Customer Link:  ${tunnel.url}`);
-      console.log(` 🔒 Protected Owner Admin: ${tunnel.url}/admin`);
-      console.log(`====================================================`);
-    } catch (err) {
-      console.error('[Localtunnel Error]:', err.message);
-    }
+
+    tunnel.on('close', () => {
+      console.log('Localtunnel connection closed.');
+    });
+  } catch (err) {
+    console.error('Localtunnel startup error:', err.message);
   }
 };
 
