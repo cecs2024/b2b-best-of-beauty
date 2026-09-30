@@ -15,7 +15,7 @@ const EXCEL_FILE_PATH = path.join(DATA_DIR, 'b2b_bookings.xlsx');
 
 // Owner Notification Details & Security
 const OWNER_CONFIG = {
-  mobile: process.env.OWNER_MOBILE || '+917984183225',
+  mobile: process.env.OWNER_MOBILE || '+917904183225',
   email: process.env.OWNER_EMAIL || 'cecsbaraths24@gmail.com',
   adminPin: process.env.ADMIN_PIN || '1234'
 };
