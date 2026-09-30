@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const ExcelJS = require('exceljs');
 const ngrok = require('@ngrok/ngrok');
+const localtunnel = require('localtunnel');
 
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
@@ -186,7 +187,7 @@ const getNodemailerTransporter = () => {
 const sendOwnerBookingNotifications = async (appointment) => {
   const { id, customerName, phone, serviceName, price, date, timeSlot, notes } = appointment;
 
-  // Formatted WhatsApp Message Text as requested
+  // Formatted WhatsApp Message Text
   const whatsappMessageBody = `🔔 New Appointment Alert!\n` +
     `Customer: ${customerName}\n` +
     `Phone: ${phone}\n` +
@@ -778,6 +779,29 @@ const server = http.createServer(async (req, res) => {
 // Initial Excel Sync on server launch
 syncAppointmentsToExcel();
 
+// Start Localtunnel for clean public URL with zero warning pages
+const startLocaltunnel = async (port) => {
+  try {
+    const tunnel = await localtunnel({ port, subdomain: 'b2b-beauty-sanctuary' });
+    console.log(`====================================================`);
+    console.log(` 🚀 LOCALTUNNEL LIVE (ZERO WARNING PAGES):`);
+    console.log(` 📱 Public Customer Link:  ${tunnel.url}`);
+    console.log(` 🔒 Protected Owner Admin: ${tunnel.url}/admin`);
+    console.log(`====================================================`);
+  } catch (e) {
+    try {
+      const tunnel = await localtunnel({ port });
+      console.log(`====================================================`);
+      console.log(` 🚀 LOCALTUNNEL LIVE (ZERO WARNING PAGES):`);
+      console.log(` 📱 Public Customer Link:  ${tunnel.url}`);
+      console.log(` 🔒 Protected Owner Admin: ${tunnel.url}/admin`);
+      console.log(`====================================================`);
+    } catch (err) {
+      console.error('[Localtunnel Error]:', err.message);
+    }
+  }
+};
+
 // Start Ngrok Tunnel if NGROK_AUTHTOKEN is configured
 const startNgrokTunnel = async (port) => {
   const token = process.env.NGROK_AUTHTOKEN;
@@ -810,5 +834,6 @@ server.listen(PORT, () => {
   console.log(` 📧 Owner Email:           ${OWNER_CONFIG.email}`);
   console.log(`====================================================`);
 
+  startLocaltunnel(PORT);
   startNgrokTunnel(PORT);
 });
