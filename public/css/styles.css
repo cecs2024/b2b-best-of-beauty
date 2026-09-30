@@ -47,11 +47,9 @@ body {
 
 /* Glassmorphism & Card Shadows */
 .glass-card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(197, 160, 89, 0.25);
-  box-shadow: 0 10px 30px -5px rgba(197, 160, 89, 0.12);
+  background: #FFFFFF;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 10px 30px -5px rgba(197, 160, 89, 0.18);
 }
 
 .glass-card-hover {
@@ -62,6 +60,60 @@ body {
   transform: translateY(-6px);
   box-shadow: 0 20px 40px -10px rgba(197, 160, 89, 0.28);
   border-color: rgba(197, 160, 89, 0.6);
+}
+
+/* Modal Overlay & Dialog Card Explicit Styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-dialog-card {
+  position: relative;
+  width: 100%;
+  max-width: 32rem; /* 512px */
+  max-height: 90vh;
+  min-height: auto;
+  background-color: #FFFFFF !important;
+  border-radius: 1.5rem;
+  padding: 1.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(197, 160, 89, 0.4);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  color: #1A1A1A !important;
+  z-index: 101;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Form controls inside modal */
+.modal-dialog-card input,
+.modal-dialog-card select,
+.modal-dialog-card textarea {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  background-color: #FDF6F6 !important;
+  color: #1A1A1A !important;
+  border: 1px solid #E8C5C5 !important;
+}
+
+.modal-dialog-card button[type="submit"] {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
 }
 
 /* Pulse Animation for Live Notification Badge */
