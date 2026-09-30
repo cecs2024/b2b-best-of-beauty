@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyApplicationTheme {
-                B2BBeautyLoungeWebView(url = "http://10.0.2.2:3000")
+                B2BBeautyLoungeWebView(url = "https://b2b-best-of-beauty.onrender.com/")
             }
         }
     }
