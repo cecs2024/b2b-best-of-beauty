@@ -1,5 +1,57 @@
 [
   {
+    "id": "B2B-5148",
+    "customerName": "Priya Sharma",
+    "phone": "9876543210",
+    "serviceId": "srv-custom",
+    "serviceName": "Luxury Glow Facial & Cleanups",
+    "price": 0,
+    "date": "2025-03-25",
+    "timeSlot": "11:00 AM (Morning)",
+    "notes": "",
+    "status": "Pending",
+    "createdAt": "2026-09-30T06:05:36.317Z"
+  },
+  {
+    "id": "B2B-4471",
+    "customerName": "Barath",
+    "phone": "8189909510",
+    "serviceId": "srv-2",
+    "serviceName": "Luxury Glow Facial & Cleanups",
+    "price": 1999,
+    "date": "2026-10-01",
+    "timeSlot": "11:00 AM (Morning)",
+    "notes": "",
+    "status": "Pending",
+    "createdAt": "2026-09-30T05:42:53.629Z"
+  },
+  {
+    "id": "B2B-6589",
+    "customerName": "Barath",
+    "phone": "7904183225",
+    "serviceId": "srv-1",
+    "serviceName": "Hair Styling & Spa",
+    "price": 1499,
+    "date": "2026-10-01",
+    "timeSlot": "01:30 PM (Afternoon)",
+    "notes": "",
+    "status": "Pending",
+    "createdAt": "2026-09-30T05:36:55.179Z"
+  },
+  {
+    "id": "B2B-5420",
+    "customerName": "Barath",
+    "phone": "7904183225",
+    "serviceId": "srv-1",
+    "serviceName": "Hair Styling & Spa",
+    "price": 1499,
+    "date": "2026-10-01",
+    "timeSlot": "01:30 PM (Afternoon)",
+    "notes": "",
+    "status": "Pending",
+    "createdAt": "2026-09-30T05:34:32.383Z"
+  },
+  {
     "id": "B2B-1305",
     "customerName": "Mahendran",
     "phone": "7904183225",

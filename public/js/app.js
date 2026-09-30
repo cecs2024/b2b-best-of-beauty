@@ -478,7 +478,7 @@ const showConfirmationModal = (appt) => {
 
   if (whatsappBtn) {
     const message = encodeURIComponent(`Hello B2B (Best of Beauty)! I have booked an appointment.\n\nBooking ID: ${refId}\nName: ${appt.customerName}\nService: ${appt.serviceName}\nDate: ${appt.date}\nTime: ${appt.timeSlot}`);
-    whatsappBtn.href = `https://wa.me/919876543210?text=${message}`;
+    whatsappBtn.href = `https://wa.me/917984183225?text=${message}`;
   }
 
   modal.classList.remove('hidden');

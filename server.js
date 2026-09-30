@@ -15,7 +15,7 @@ const EXCEL_FILE_PATH = path.join(DATA_DIR, 'b2b_bookings.xlsx');
 
 // Owner Notification Details & Security
 const OWNER_CONFIG = {
-  mobile: process.env.OWNER_MOBILE || '+917904183225',
+  mobile: process.env.OWNER_MOBILE || '+917984183225',
   email: process.env.OWNER_EMAIL || 'cecsbaraths24@gmail.com',
   adminPin: process.env.ADMIN_PIN || '1234'
 };
@@ -186,16 +186,13 @@ const getNodemailerTransporter = () => {
 const sendOwnerBookingNotifications = async (appointment) => {
   const { id, customerName, phone, serviceName, price, date, timeSlot, notes } = appointment;
 
-  // Formatted WhatsApp Message Text
-  const whatsappMessageBody = `👑 *New Booking Alert - B2B (Best of Beauty)*\n\n` +
-    `🆔 *Ref ID:* ${id}\n` +
-    `👤 *Customer Name:* ${customerName}\n` +
-    `📞 *Mobile:* ${phone}\n` +
-    `💆‍♀️ *Service:* ${serviceName} (₹${price})\n` +
-    `📅 *Scheduled Date:* ${date}\n` +
-    `⏰ *Time Slot:* ${timeSlot}\n` +
-    `📝 *Notes:* ${notes || 'None'}\n\n` +
-    `✨ _Manage this booking in your B2B Owner Admin Panel._`;
+  // Formatted WhatsApp Message Text as requested
+  const whatsappMessageBody = `🔔 New Appointment Alert!\n` +
+    `Customer: ${customerName}\n` +
+    `Phone: ${phone}\n` +
+    `Service: ${serviceName}\n` +
+    `Date: ${date}\n` +
+    `Time: ${timeSlot}`;
 
   console.log(`\n----------------------------------------------------`);
   console.log(`📲 [OWNER NOTIFICATION DISPATCH - ${id}]`);
@@ -407,6 +404,62 @@ const server = http.createServer(async (req, res) => {
       }
     } catch (err) {
       return sendJSON(res, 400, { success: false, error: err.message });
+    }
+  }
+
+  // --- DEDICATED MOBILE POST API: /api/book-appointment ---
+  if (pathname === '/api/book-appointment' && method === 'POST') {
+    try {
+      const body = await parseRequestBody(req);
+
+      const customerName = body.customerName || body.name;
+      const customerPhone = body.customerPhone || body.phone;
+      const serviceName = body.serviceName || body.service;
+      const bookingDate = body.bookingDate || body.date;
+      const bookingTime = body.bookingTime || body.time || body.timeSlot;
+
+      if (!customerName || !customerPhone || !serviceName || !bookingDate || !bookingTime) {
+        return sendJSON(res, 400, {
+          success: false,
+          error: 'Missing required fields: customerName, customerPhone, serviceName, bookingDate, bookingTime are required.'
+        });
+      }
+
+      const appointments = readJSON('appointments.json', []);
+      const newAppointment = {
+        id: `B2B-${Math.floor(1000 + Math.random() * 9000)}`,
+        customerName: customerName.trim(),
+        phone: customerPhone.trim(),
+        serviceId: body.serviceId || 'srv-custom',
+        serviceName: serviceName.trim(),
+        price: Number(body.price) || 0,
+        date: bookingDate,
+        timeSlot: bookingTime,
+        notes: (body.notes || '').trim(),
+        status: 'Pending',
+        createdAt: new Date().toISOString()
+      };
+
+      appointments.unshift(newAppointment);
+      writeJSON('appointments.json', appointments);
+
+      syncAppointmentsToExcel().catch(err => {});
+      broadcastEvent('new_appointment', newAppointment);
+
+      // Trigger Twilio WhatsApp Alert to Owner Number
+      sendOwnerBookingNotifications(newAppointment).catch(err => {
+        console.error('[Notification Async Error]:', err.message);
+      });
+
+      console.log(`[B2B Mobile Backend] New Appointment Booked: ${newAppointment.id} by ${newAppointment.customerName}`);
+      return sendJSON(res, 201, {
+        success: true,
+        message: 'Appointment booked successfully and WhatsApp notification sent!',
+        bookingId: newAppointment.id,
+        data: newAppointment
+      });
+    } catch (err) {
+      return sendJSON(res, 500, { success: false, error: err.message });
     }
   }
 
