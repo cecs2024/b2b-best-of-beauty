@@ -676,24 +676,40 @@ const server = http.createServer(async (req, res) => {
   }
 
   // 5. PUT /api/appointments/:id (Update Appointment Status & Sync Excel & MongoDB)
-  if (pathname.startsWith('/api/appointments/') && method === 'PUT') {
+  if (pathname.includes('/api/appointments/') && method === 'PUT') {
     try {
-      const rawId = pathname.replace('/api/appointments/', '').trim();
+      const rawId = pathname.substring(pathname.indexOf('/api/appointments/') + '/api/appointments/'.length).trim();
       const id = decodeURIComponent(rawId);
       const body = await parseRequestBody(req);
       const appointments = readJSON('appointments.json', []);
-      const index = appointments.findIndex(a => String(a.id).trim().toLowerCase() === id.toLowerCase());
+      let index = appointments.findIndex(a => String(a.id).trim().toLowerCase() === id.toLowerCase());
 
-      if (index === -1) {
-        console.error(`[PUT Error]: Appointment ID '${id}' not found in appointments.json`);
-        return sendJSON(res, 404, { success: false, error: `Appointment '${id}' not found` });
+      let updatedAppt = null;
+
+      if (index !== -1) {
+        appointments[index] = {
+          ...appointments[index],
+          ...body,
+          id: appointments[index].id
+        };
+        updatedAppt = appointments[index];
+      } else {
+        // Upsert if record was in MongoDB or dynamic memory
+        updatedAppt = {
+          id: id,
+          customerName: body.customerName || 'Guest Customer',
+          phone: body.phone || '',
+          serviceName: body.serviceName || 'Beauty Treatment',
+          price: Number(body.price) || 0,
+          date: body.date || new Date().toISOString().split('T')[0],
+          timeSlot: body.timeSlot || '11:00 AM (Morning)',
+          notes: body.notes || '',
+          status: body.status || 'Confirmed',
+          createdAt: body.createdAt || new Date().toISOString(),
+          ...body
+        };
+        appointments.unshift(updatedAppt);
       }
-
-      appointments[index] = {
-        ...appointments[index],
-        ...body,
-        id: appointments[index].id // preserve exact original ID
-      };
 
       writeJSON('appointments.json', appointments);
 
@@ -701,11 +717,11 @@ const server = http.createServer(async (req, res) => {
       if (isMongoConnected && AppointmentModel) {
         try {
           await AppointmentModel.updateOne(
-            { id: appointments[index].id },
-            { $set: { status: appointments[index].status, ...body } },
+            { id: updatedAppt.id },
+            { $set: updatedAppt },
             { upsert: true }
           );
-          console.log(`🍃 [MongoDB Update Success]: Updated appointment ${id} status to '${appointments[index].status}'`);
+          console.log(`🍃 [MongoDB Update Success]: Updated appointment ${id} status to '${updatedAppt.status}'`);
         } catch (mErr) {
           console.error(`❌ [MongoDB Update Error]:`, mErr.message);
         }
@@ -717,13 +733,13 @@ const server = http.createServer(async (req, res) => {
       });
 
       // Broadcast real-time update event
-      broadcastEvent('update_appointment', appointments[index]);
+      broadcastEvent('update_appointment', updatedAppt);
 
-      console.log(`✅ [Appointment Status Updated]: ${id} -> ${appointments[index].status}`);
+      console.log(`✅ [Appointment Status Updated]: ${id} -> ${updatedAppt.status}`);
       return sendJSON(res, 200, {
         success: true,
         message: 'Appointment updated successfully',
-        data: appointments[index]
+        data: updatedAppt
       });
     } catch (err) {
       return sendJSON(res, 400, { success: false, error: err.message });
@@ -731,8 +747,8 @@ const server = http.createServer(async (req, res) => {
   }
 
   // 6. DELETE /api/appointments/:id
-  if (pathname.startsWith('/api/appointments/') && method === 'DELETE') {
-    const rawId = pathname.replace('/api/appointments/', '').trim();
+  if (pathname.includes('/api/appointments/') && method === 'DELETE') {
+    const rawId = pathname.substring(pathname.indexOf('/api/appointments/') + '/api/appointments/'.length).trim();
     const id = decodeURIComponent(rawId);
     let appointments = readJSON('appointments.json', []);
     const initialLength = appointments.length;
@@ -835,38 +851,62 @@ const server = http.createServer(async (req, res) => {
   }
 
   // 9. PUT /api/orders/:id (Update Order Status)
-  if (pathname.startsWith('/api/orders/') && method === 'PUT') {
+  if (pathname.includes('/api/orders/') && method === 'PUT') {
     try {
-      const rawId = pathname.replace('/api/orders/', '').trim();
+      const rawId = pathname.substring(pathname.indexOf('/api/orders/') + '/api/orders/'.length).trim();
       const id = decodeURIComponent(rawId);
+      const body = await parseRequestBody(req);
       const orders = readJSON('orders.json', []);
-      const index = orders.findIndex(o => String(o.id).trim().toLowerCase() === id.toLowerCase());
+      let index = orders.findIndex(o => String(o.id).trim().toLowerCase() === id.toLowerCase());
 
-      if (index === -1) {
-        return sendJSON(res, 404, { success: false, error: 'Order not found' });
+      let updatedOrder = null;
+
+      if (index !== -1) {
+        orders[index] = {
+          ...orders[index],
+          ...body,
+          id: orders[index].id
+        };
+        updatedOrder = orders[index];
+      } else {
+        updatedOrder = {
+          id: id,
+          customerName: body.customerName || 'Customer',
+          phone: body.phone || '',
+          address: body.address || '',
+          paymentMethod: body.paymentMethod || 'Cash',
+          items: body.items || [],
+          subtotal: Number(body.subtotal) || 0,
+          discount: Number(body.discount) || 0,
+          total: Number(body.total) || 0,
+          status: body.status || 'Confirmed',
+          createdAt: body.createdAt || new Date().toISOString(),
+          ...body
+        };
+        orders.unshift(updatedOrder);
       }
 
-      orders[index] = {
-        ...orders[index],
-        ...body,
-        id: orders[index].id
-      };
-
       writeJSON('orders.json', orders);
+
       if (isMongoConnected && OrderModel) {
         try {
-          await OrderModel.updateOne({ id: orders[index].id }, { $set: { status: orders[index].status, ...body } }, { upsert: true });
-          console.log(`🍃 [MongoDB Update Success]: Updated order ${id} status to '${orders[index].status}'`);
+          await OrderModel.updateOne(
+            { id: updatedOrder.id },
+            { $set: updatedOrder },
+            { upsert: true }
+          );
+          console.log(`🍃 [MongoDB Update Success]: Updated order ${id} status to '${updatedOrder.status}'`);
         } catch (mErr) {
           console.error(`❌ [MongoDB Order Update Error]:`, mErr.message);
         }
       }
-      broadcastEvent('update_order', orders[index]);
+
+      broadcastEvent('update_order', updatedOrder);
 
       return sendJSON(res, 200, {
         success: true,
         message: 'Order status updated',
-        data: orders[index]
+        data: updatedOrder
       });
     } catch (err) {
       return sendJSON(res, 400, { success: false, error: err.message });
