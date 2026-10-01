@@ -62,6 +62,12 @@ body {
   border-color: rgba(197, 160, 89, 0.6);
 }
 
+/* Ensure hidden modals are strictly hidden until triggered */
+.modal-backdrop.hidden,
+.hidden {
+  display: none !important;
+}
+
 /* 100% RESPONSIVE ADAPTIVE MODAL FOR ALL SCREEN SIZES (MOBILE, TABLET, LAPTOP) */
 .modal-backdrop {
   position: fixed !important;
@@ -222,10 +228,6 @@ body {
   from {
     transform: translateX(0);
     opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
   }
 }
 
