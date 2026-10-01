@@ -148,20 +148,53 @@ const initRealtimeSSE = () => {
 
     evtSource.addEventListener('new_appointment', (e) => {
       const appt = JSON.parse(e.data);
-      adminState.appointments.unshift(appt);
-      showAdminToast('🔔 New Appointment Booked!', `${appt.customerName} booked ${appt.serviceName} for ${appt.date}`);
-      renderAdminDashboard();
+      const exists = adminState.appointments.some(a => String(a.id).trim().toLowerCase() === String(appt.id).trim().toLowerCase());
+      if (!exists) {
+        adminState.appointments.unshift(appt);
+        showAdminToast('🔔 New Appointment Booked!', `${appt.customerName} booked ${appt.serviceName} for ${appt.date}`);
+        renderAdminDashboard();
+      }
     });
 
     evtSource.addEventListener('new_order', (e) => {
       const order = JSON.parse(e.data);
-      adminState.orders.unshift(order);
-      showAdminToast('🛍️ New E-Commerce Order!', `${order.customerName} ordered products worth ₹${order.total}`);
-      renderAdminDashboard();
+      const exists = adminState.orders.some(o => String(o.id).trim().toLowerCase() === String(order.id).trim().toLowerCase());
+      if (!exists) {
+        adminState.orders.unshift(order);
+        showAdminToast('🛍️ New E-Commerce Order!', `${order.customerName} ordered products worth ₹${order.total}`);
+        renderAdminDashboard();
+      }
     });
 
-    evtSource.addEventListener('update_appointment', () => fetchAppointments());
-    evtSource.addEventListener('update_order', () => fetchOrders());
+    evtSource.addEventListener('update_appointment', (e) => {
+      try {
+        if (e.data) {
+          const updated = JSON.parse(e.data);
+          const item = adminState.appointments.find(a => String(a.id).trim().toLowerCase() === String(updated.id).trim().toLowerCase());
+          if (item) {
+            item.status = updated.status;
+            renderAdminDashboard();
+          }
+        }
+      } catch (err) {
+        fetchAppointments();
+      }
+    });
+
+    evtSource.addEventListener('update_order', (e) => {
+      try {
+        if (e.data) {
+          const updated = JSON.parse(e.data);
+          const item = adminState.orders.find(o => String(o.id).trim().toLowerCase() === String(updated.id).trim().toLowerCase());
+          if (item) {
+            item.status = updated.status;
+            renderAdminDashboard();
+          }
+        }
+      } catch (err) {
+        fetchOrders();
+      }
+    });
 
   } catch (err) {
     console.warn('SSE fallback to polling');
@@ -181,7 +214,14 @@ const fetchAppointments = async () => {
     const res = await fetch(`${API_BASE}/api/appointments`, { headers: getAdminFetchHeaders() });
     const data = await res.json();
     if (data.success && data.data) {
-      adminState.appointments = data.data;
+      const uniqueMap = new Map();
+      data.data.forEach(a => {
+        const key = String(a.id).trim().toLowerCase();
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, a);
+        }
+      });
+      adminState.appointments = Array.from(uniqueMap.values());
       renderAdminDashboard();
     }
   } catch (e) {
@@ -195,7 +235,14 @@ const fetchOrders = async () => {
     const res = await fetch(`${API_BASE}/api/orders`, { headers: getAdminFetchHeaders() });
     const data = await res.json();
     if (data.success && data.data) {
-      adminState.orders = data.data;
+      const uniqueMap = new Map();
+      data.data.forEach(o => {
+        const key = String(o.id).trim().toLowerCase();
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, o);
+        }
+      });
+      adminState.orders = Array.from(uniqueMap.values());
       renderAdminDashboard();
     }
   } catch (e) {
@@ -341,7 +388,9 @@ const updateAppointmentStatus = async (id, newStatus) => {
     });
     const data = await res.json();
     if (data.success && data.data) {
-      if (item) item.status = data.data.status;
+      if (item) {
+        Object.assign(item, data.data);
+      }
       renderAdminDashboard();
       showAdminToast('✅ Status Updated', `Booking ${id} status set to ${newStatus}`);
     }
@@ -366,7 +415,9 @@ const updateOrderStatus = async (id, newStatus) => {
     });
     const data = await res.json();
     if (data.success && data.data) {
-      if (item) item.status = data.data.status;
+      if (item) {
+        Object.assign(item, data.data);
+      }
       renderAdminDashboard();
       showAdminToast('✅ Order Updated', `Order ${id} status set to ${newStatus}`);
     }

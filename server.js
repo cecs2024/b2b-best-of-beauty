@@ -694,18 +694,26 @@ const server = http.createServer(async (req, res) => {
         };
         updatedAppt = appointments[index];
       } else {
-        // Upsert if record was in MongoDB or dynamic memory
+        // Look up record in MongoDB first if index === -1 to preserve customerName & details
+        let existingMongo = null;
+        if (isMongoConnected && AppointmentModel) {
+          try {
+            existingMongo = await AppointmentModel.findOne({ id: new RegExp(`^${id}$`, 'i') }).lean();
+          } catch (e) {}
+        }
+
         updatedAppt = {
-          id: id,
-          customerName: body.customerName || 'Guest Customer',
-          phone: body.phone || '',
-          serviceName: body.serviceName || 'Beauty Treatment',
-          price: Number(body.price) || 0,
-          date: body.date || new Date().toISOString().split('T')[0],
-          timeSlot: body.timeSlot || '11:00 AM (Morning)',
-          notes: body.notes || '',
-          status: body.status || 'Confirmed',
-          createdAt: body.createdAt || new Date().toISOString(),
+          id: existingMongo ? existingMongo.id : id,
+          customerName: body.customerName || (existingMongo ? existingMongo.customerName : 'Guest Customer'),
+          phone: body.phone || (existingMongo ? existingMongo.phone : ''),
+          serviceId: body.serviceId || (existingMongo ? existingMongo.serviceId : 'srv-custom'),
+          serviceName: body.serviceName || (existingMongo ? existingMongo.serviceName : 'Beauty Treatment'),
+          price: body.price !== undefined ? Number(body.price) : (existingMongo ? Number(existingMongo.price) : 0),
+          date: body.date || (existingMongo ? existingMongo.date : new Date().toISOString().split('T')[0]),
+          timeSlot: body.timeSlot || (existingMongo ? existingMongo.timeSlot : '11:00 AM (Morning)'),
+          notes: body.notes !== undefined ? body.notes : (existingMongo ? existingMongo.notes : ''),
+          status: body.status || (existingMongo ? existingMongo.status : 'Pending'),
+          createdAt: existingMongo ? existingMongo.createdAt : new Date().toISOString(),
           ...body
         };
         appointments.unshift(updatedAppt);
