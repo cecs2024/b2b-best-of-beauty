@@ -62,60 +62,64 @@ body {
   border-color: rgba(197, 160, 89, 0.6);
 }
 
-/* 100% BULLETPROOF WEBKIT-SAFE MOBILE & LAPTOP MODAL */
+/* 100% RESPONSIVE ADAPTIVE MODAL FOR ALL SCREEN SIZES (MOBILE, TABLET, LAPTOP) */
 .modal-backdrop {
   position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
+  inset: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   z-index: 99999 !important;
   background-color: rgba(0, 0, 0, 0.75) !important;
   backdrop-filter: blur(6px) !important;
   -webkit-backdrop-filter: blur(6px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  display: block !important;
-  padding: 2.5rem 0 !important;
-  box-sizing: border-box !important;
 }
 
 .modal-dialog-card {
   position: relative !important;
   width: 92vw !important;
-  max-width: 500px !important;
-  height: auto !important;
-  min-height: auto !important;
-  margin: 0 auto !important;
+  max-width: 520px !important;
+  max-height: 85vh !important;
+  margin: auto !important;
   background-color: #FFFFFF !important;
   border-radius: 1.5rem !important;
-  padding: 1.5rem !important;
+  padding: 1.25rem !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
   border: 2px solid #C5A059 !important;
-  display: block !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: flex !important;
+  flex-direction: column !important;
   color: #1A1A1A !important;
   z-index: 100000 !important;
   opacity: 1 !important;
   visibility: visible !important;
   box-sizing: border-box !important;
+  flex-shrink: 0 !important;
 }
 
 @media (min-width: 640px) {
   .modal-dialog-card {
     padding: 2rem !important;
+    max-height: 90vh !important;
   }
 }
 
 /* Force Form Elements inside Modal to never shrink or hide */
 .modal-dialog-card form {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
   width: 100% !important;
 }
 
 .modal-dialog-card form > div {
-  margin-bottom: 1rem !important;
+  margin-bottom: 0.85rem !important;
   display: block !important;
   width: 100% !important;
 }
@@ -157,7 +161,7 @@ body {
   font-size: 0.875rem !important;
   background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #9A7831 100%) !important;
   color: #1A1A1A !important;
-  margin-top: 1rem !important;
+  margin-top: 0.85rem !important;
   border: none !important;
   cursor: pointer !important;
 }
