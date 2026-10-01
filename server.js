@@ -575,18 +575,25 @@ const server = http.createServer(async (req, res) => {
 
   // 3. GET /api/appointments
   if (pathname === '/api/appointments' && method === 'GET') {
+    const localAppointments = readJSON('appointments.json', []);
     if (isMongoConnected && AppointmentModel) {
       try {
         const mongoAppointments = await AppointmentModel.find().sort({ createdAt: -1 });
         if (mongoAppointments && mongoAppointments.length > 0) {
-          return sendJSON(res, 200, { success: true, data: mongoAppointments });
+          const mongoMap = new Map(mongoAppointments.map(a => [a.id, a.toObject()]));
+          localAppointments.forEach(localAppt => {
+            if (!mongoMap.has(localAppt.id)) {
+              mongoMap.set(localAppt.id, localAppt);
+            }
+          });
+          const merged = Array.from(mongoMap.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          return sendJSON(res, 200, { success: true, data: merged });
         }
       } catch (e) {
         console.error('[MongoDB Fetch Error]:', e.message);
       }
     }
-    const appointments = readJSON('appointments.json', []);
-    return sendJSON(res, 200, { success: true, data: appointments });
+    return sendJSON(res, 200, { success: true, data: localAppointments });
   }
 
   // 4. POST /api/appointments (Create Appointment, Sync Excel & Dispatch Owner Notifications)
@@ -655,13 +662,13 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // 5. PUT /api/appointments/:id (Update Appointment Status & Sync Excel)
+  // 5. PUT /api/appointments/:id (Update Appointment Status & Sync Excel & MongoDB)
   if (pathname.startsWith('/api/appointments/') && method === 'PUT') {
     try {
-      const id = pathname.replace('/api/appointments/', '');
+      const id = pathname.replace('/api/appointments/', '').trim();
       const body = await parseRequestBody(req);
       const appointments = readJSON('appointments.json', []);
-      const index = appointments.findIndex(a => a.id === id);
+      const index = appointments.findIndex(a => String(a.id).trim() === id);
 
       if (index === -1) {
         return sendJSON(res, 404, { success: false, error: 'Appointment not found' });
@@ -675,9 +682,14 @@ const server = http.createServer(async (req, res) => {
 
       writeJSON('appointments.json', appointments);
 
-      // Save to MongoDB if connected
+      // Update MongoDB if connected
       if (isMongoConnected && AppointmentModel) {
-        try { await AppointmentModel.findOneAndUpdate({ id }, appointments[index]); } catch (e) {}
+        try {
+          await AppointmentModel.updateOne({ id: id }, { $set: appointments[index] }, { upsert: true });
+          console.log(`🍃 [MongoDB Update Success]: Updated appointment ${id} status to '${appointments[index].status}'`);
+        } catch (mErr) {
+          console.error(`❌ [MongoDB Update Error]:`, mErr.message);
+        }
       }
 
       // Sync updated status to Excel log
@@ -688,6 +700,7 @@ const server = http.createServer(async (req, res) => {
       // Broadcast real-time update event
       broadcastEvent('update_appointment', appointments[index]);
 
+      console.log(`✅ [Appointment Status Updated]: ${id} -> ${appointments[index].status}`);
       return sendJSON(res, 200, {
         success: true,
         message: 'Appointment updated successfully',
@@ -700,10 +713,10 @@ const server = http.createServer(async (req, res) => {
 
   // 6. DELETE /api/appointments/:id
   if (pathname.startsWith('/api/appointments/') && method === 'DELETE') {
-    const id = pathname.replace('/api/appointments/', '');
+    const id = pathname.replace('/api/appointments/', '').trim();
     let appointments = readJSON('appointments.json', []);
     const initialLength = appointments.length;
-    appointments = appointments.filter(a => a.id !== id);
+    appointments = appointments.filter(a => String(a.id).trim() !== id);
 
     if (appointments.length === initialLength) {
       return sendJSON(res, 404, { success: false, error: 'Appointment not found' });
@@ -721,16 +734,23 @@ const server = http.createServer(async (req, res) => {
 
   // 7. GET /api/orders
   if (pathname === '/api/orders' && method === 'GET') {
+    const localOrders = readJSON('orders.json', []);
     if (isMongoConnected && OrderModel) {
       try {
         const mongoOrders = await OrderModel.find().sort({ createdAt: -1 });
         if (mongoOrders && mongoOrders.length > 0) {
-          return sendJSON(res, 200, { success: true, data: mongoOrders });
+          const mongoOrderMap = new Map(mongoOrders.map(o => [o.id, o.toObject()]));
+          localOrders.forEach(localOrd => {
+            if (!mongoOrderMap.has(localOrd.id)) {
+              mongoOrderMap.set(localOrd.id, localOrd);
+            }
+          });
+          const mergedOrders = Array.from(mongoOrderMap.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          return sendJSON(res, 200, { success: true, data: mergedOrders });
         }
       } catch (e) {}
     }
-    const orders = readJSON('orders.json', []);
-    return sendJSON(res, 200, { success: true, data: orders });
+    return sendJSON(res, 200, { success: true, data: localOrders });
   }
 
   // 8. POST /api/orders (Create Product Order)
@@ -787,10 +807,10 @@ const server = http.createServer(async (req, res) => {
   // 9. PUT /api/orders/:id (Update Order Status)
   if (pathname.startsWith('/api/orders/') && method === 'PUT') {
     try {
-      const id = pathname.replace('/api/orders/', '');
+      const id = pathname.replace('/api/orders/', '').trim();
       const body = await parseRequestBody(req);
       const orders = readJSON('orders.json', []);
-      const index = orders.findIndex(o => o.id === id);
+      const index = orders.findIndex(o => String(o.id).trim() === id);
 
       if (index === -1) {
         return sendJSON(res, 404, { success: false, error: 'Order not found' });
@@ -804,7 +824,12 @@ const server = http.createServer(async (req, res) => {
 
       writeJSON('orders.json', orders);
       if (isMongoConnected && OrderModel) {
-        try { await OrderModel.findOneAndUpdate({ id }, orders[index]); } catch (e) {}
+        try {
+          await OrderModel.updateOne({ id: id }, { $set: orders[index] }, { upsert: true });
+          console.log(`🍃 [MongoDB Update Success]: Updated order ${id} status to '${orders[index].status}'`);
+        } catch (mErr) {
+          console.error(`❌ [MongoDB Order Update Error]:`, mErr.message);
+        }
       }
       broadcastEvent('update_order', orders[index]);
 
