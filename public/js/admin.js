@@ -326,31 +326,53 @@ const getStatusBadgeClass = (status) => {
 };
 
 const updateAppointmentStatus = async (id, newStatus) => {
+  // Optimistically update local state & UI immediately
+  const item = adminState.appointments.find(a => a.id === id);
+  if (item) {
+    item.status = newStatus;
+    renderAdminDashboard();
+  }
+
   try {
-    await fetch(`${API_BASE}/api/appointments/${id}`, {
+    const res = await fetch(`${API_BASE}/api/appointments/${id}`, {
       method: 'PUT',
       headers: getAdminFetchHeaders(),
       body: JSON.stringify({ status: newStatus })
     });
+    const data = await res.json();
+    if (data.success && data.data) {
+      if (item) item.status = data.data.status;
+      renderAdminDashboard();
+      showAdminToast('✅ Status Updated', `Booking ${id} status set to ${newStatus}`);
+    }
   } catch (err) {
-    const item = adminState.appointments.find(a => a.id === id);
-    if (item) item.status = newStatus;
+    console.error('Failed to update status on server:', err);
   }
-  fetchAppointments();
 };
 
 const updateOrderStatus = async (id, newStatus) => {
+  // Optimistically update local state & UI immediately
+  const item = adminState.orders.find(o => o.id === id);
+  if (item) {
+    item.status = newStatus;
+    renderAdminDashboard();
+  }
+
   try {
-    await fetch(`${API_BASE}/api/orders/${id}`, {
+    const res = await fetch(`${API_BASE}/api/orders/${id}`, {
       method: 'PUT',
       headers: getAdminFetchHeaders(),
       body: JSON.stringify({ status: newStatus })
     });
+    const data = await res.json();
+    if (data.success && data.data) {
+      if (item) item.status = data.data.status;
+      renderAdminDashboard();
+      showAdminToast('✅ Order Updated', `Order ${id} status set to ${newStatus}`);
+    }
   } catch (err) {
-    const item = adminState.orders.find(o => o.id === id);
-    if (item) item.status = newStatus;
+    console.error('Failed to update order status on server:', err);
   }
-  fetchOrders();
 };
 
 // Check Auth on load
