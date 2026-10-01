@@ -580,27 +580,42 @@ const server = http.createServer(async (req, res) => {
     if (isMongoConnected && AppointmentModel) {
       try {
         const mongoAppointments = await AppointmentModel.find().lean().sort({ createdAt: -1 });
-        if (mongoAppointments && mongoAppointments.length > 0) {
-          const localMap = new Map(localAppointments.map(a => [String(a.id).trim().toLowerCase(), a]));
 
-          const updatedMongoList = mongoAppointments.map(mongoAppt => {
-            const key = String(mongoAppt.id).trim().toLowerCase();
-            const localAppt = localMap.get(key);
-            if (localAppt) {
-              return { ...mongoAppt, status: localAppt.status || mongoAppt.status };
-            }
-            return mongoAppt;
-          });
+        // Merge both local JSON and MongoDB records using Map keyed by lowercase ID
+        const allMap = new Map();
 
-          const mongoIdSet = new Set(mongoAppointments.map(a => String(a.id).trim().toLowerCase()));
-          localAppointments.forEach(lAppt => {
-            if (!mongoIdSet.has(String(lAppt.id).trim().toLowerCase())) {
-              updatedMongoList.push(lAppt);
+        // 1. First add MongoDB records
+        if (mongoAppointments && Array.isArray(mongoAppointments)) {
+          mongoAppointments.forEach(m => {
+            if (m && m.id) {
+              allMap.set(String(m.id).trim().toLowerCase(), { ...m });
             }
           });
-
-          return sendJSON(res, 200, { success: true, data: updatedMongoList });
         }
+
+        // 2. Add or update with local JSON records (so newest local bookings always show up!)
+        if (localAppointments && Array.isArray(localAppointments)) {
+          localAppointments.forEach(l => {
+            if (l && l.id) {
+              const key = String(l.id).trim().toLowerCase();
+              if (allMap.has(key)) {
+                const existing = allMap.get(key);
+                allMap.set(key, { ...existing, ...l, status: l.status || existing.status });
+              } else {
+                allMap.set(key, { ...l });
+              }
+            }
+          });
+        }
+
+        const mergedList = Array.from(allMap.values()).sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+
+        return sendJSON(res, 200, { success: true, data: mergedList });
+
       } catch (e) {
         console.error('[MongoDB Fetch Error]:', e.message);
       }
