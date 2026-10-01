@@ -63,13 +63,14 @@ let isMongoConnected = false;
 
 const connectMongoDB = async () => {
   const mongoUri = process.env.MONGODB_URI;
-  if (!mongoUri || mongoUri.includes('YOUR_MONGODB')) {
-    console.log('ℹ️ [Database Status]: Running on Dual Storage (Local JSON & Automated Excel Sync Engine)');
+  if (!mongoUri || mongoUri.includes('admin:1234@cluster0') || mongoUri.includes('YOUR_MONGODB')) {
+    console.log('ℹ️ [Database Status]: Using Local JSON Storage & Automated Excel Sync Engine');
+    console.log('   (To activate MongoDB Atlas, update MONGODB_URI in .env with your real MongoDB Atlas password)');
     return;
   }
 
   try {
-    await mongoose.connect(mongoUri);
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
     isMongoConnected = true;
     console.log('🍃 [MongoDB Cloud Database Connected]: MongoDB Atlas Active');
 
@@ -106,7 +107,9 @@ const connectMongoDB = async () => {
     OrderModel = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
   } catch (err) {
+    isMongoConnected = false;
     console.error('❌ [MongoDB Connection Error]:', err.message);
+    console.error('   💡 Tip: Ensure Network Access in MongoDB Atlas allows 0.0.0.0/0 (Anywhere)');
   }
 };
 
@@ -501,7 +504,14 @@ const server = http.createServer(async (req, res) => {
 
       // Save to MongoDB if connected
       if (isMongoConnected && AppointmentModel) {
-        try { await new AppointmentModel(newAppointment).save(); } catch (e) {}
+        try {
+          await new AppointmentModel(newAppointment).save();
+          console.log(`🍃 [MongoDB Save Success]: Saved appointment ${newAppointment.id} to MongoDB Atlas`);
+        } catch (mongoErr) {
+          console.error(`❌ [MongoDB Save Error]:`, mongoErr.message);
+        }
+      } else {
+        console.log(`ℹ️ [Database Saved]: Stored in appointments.json & Excel sheet (MongoDB not connected)`);
       }
 
       syncAppointmentsToExcel().catch(err => {});
@@ -565,6 +575,16 @@ const server = http.createServer(async (req, res) => {
 
   // 3. GET /api/appointments
   if (pathname === '/api/appointments' && method === 'GET') {
+    if (isMongoConnected && AppointmentModel) {
+      try {
+        const mongoAppointments = await AppointmentModel.find().sort({ createdAt: -1 });
+        if (mongoAppointments && mongoAppointments.length > 0) {
+          return sendJSON(res, 200, { success: true, data: mongoAppointments });
+        }
+      } catch (e) {
+        console.error('[MongoDB Fetch Error]:', e.message);
+      }
+    }
     const appointments = readJSON('appointments.json', []);
     return sendJSON(res, 200, { success: true, data: appointments });
   }
@@ -601,7 +621,14 @@ const server = http.createServer(async (req, res) => {
 
       // Save to MongoDB if connected
       if (isMongoConnected && AppointmentModel) {
-        try { await new AppointmentModel(newAppointment).save(); } catch (e) {}
+        try {
+          await new AppointmentModel(newAppointment).save();
+          console.log(`🍃 [MongoDB Save Success]: Saved appointment ${newAppointment.id} to MongoDB Atlas`);
+        } catch (mongoErr) {
+          console.error(`❌ [MongoDB Save Error]:`, mongoErr.message);
+        }
+      } else {
+        console.log(`ℹ️ [Database Saved]: Stored in appointments.json & Excel sheet (MongoDB not connected)`);
       }
 
       // Automatically append and sync new booking to Excel Log Sheet
@@ -694,6 +721,14 @@ const server = http.createServer(async (req, res) => {
 
   // 7. GET /api/orders
   if (pathname === '/api/orders' && method === 'GET') {
+    if (isMongoConnected && OrderModel) {
+      try {
+        const mongoOrders = await OrderModel.find().sort({ createdAt: -1 });
+        if (mongoOrders && mongoOrders.length > 0) {
+          return sendJSON(res, 200, { success: true, data: mongoOrders });
+        }
+      } catch (e) {}
+    }
     const orders = readJSON('orders.json', []);
     return sendJSON(res, 200, { success: true, data: orders });
   }
@@ -729,7 +764,10 @@ const server = http.createServer(async (req, res) => {
       writeJSON('orders.json', orders);
 
       if (isMongoConnected && OrderModel) {
-        try { await new OrderModel(newOrder).save(); } catch (e) {}
+        try {
+          await new OrderModel(newOrder).save();
+          console.log(`🍃 [MongoDB Save Success]: Saved order ${newOrder.id} to MongoDB Atlas`);
+        } catch (e) {}
       }
 
       // Broadcast real-time SSE event to Admin Panel
