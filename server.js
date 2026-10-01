@@ -8,6 +8,7 @@ const twilio = require('twilio');
 const ExcelJS = require('exceljs');
 const ngrok = require('@ngrok/ngrok');
 const localtunnel = require('localtunnel');
+const mongoose = require('mongoose');
 
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
@@ -52,6 +53,60 @@ const writeJSON = (fileName, data) => {
   } catch (err) {
     console.error(`Error writing ${fileName}:`, err.message);
     return false;
+  }
+};
+
+// --- MONGODB DATABASE CONNECTOR & SCHEMAS ---
+let AppointmentModel = null;
+let OrderModel = null;
+let isMongoConnected = false;
+
+const connectMongoDB = async () => {
+  const mongoUri = process.env.MONGODB_URI;
+  if (!mongoUri || mongoUri.includes('YOUR_MONGODB')) {
+    console.log('ℹ️ [Database Status]: Running on Dual Storage (Local JSON & Automated Excel Sync Engine)');
+    return;
+  }
+
+  try {
+    await mongoose.connect(mongoUri);
+    isMongoConnected = true;
+    console.log('🍃 [MongoDB Cloud Database Connected]: MongoDB Atlas Active');
+
+    // Define Mongoose Schemas
+    const appointmentSchema = new mongoose.Schema({
+      id: { type: String, required: true, unique: true },
+      customerName: { type: String, required: true },
+      phone: { type: String, required: true },
+      serviceId: { type: String, default: 'srv-custom' },
+      serviceName: { type: String, required: true },
+      price: { type: Number, default: 0 },
+      date: { type: String, required: true },
+      timeSlot: { type: String, required: true },
+      notes: { type: String, default: '' },
+      status: { type: String, default: 'Pending' },
+      createdAt: { type: Date, default: Date.now }
+    });
+
+    const orderSchema = new mongoose.Schema({
+      id: { type: String, required: true, unique: true },
+      customerName: { type: String, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, default: '' },
+      paymentMethod: { type: String, default: 'Cash at Parlour' },
+      items: Array,
+      subtotal: { type: Number, default: 0 },
+      discount: { type: Number, default: 0 },
+      total: { type: Number, default: 0 },
+      status: { type: String, default: 'Pending' },
+      createdAt: { type: Date, default: Date.now }
+    });
+
+    AppointmentModel = mongoose.models.Appointment || mongoose.model('Appointment', appointmentSchema);
+    OrderModel = mongoose.models.Order || mongoose.model('Order', orderSchema);
+
+  } catch (err) {
+    console.error('❌ [MongoDB Connection Error]:', err.message);
   }
 };
 
@@ -444,6 +499,11 @@ const server = http.createServer(async (req, res) => {
       appointments.unshift(newAppointment);
       writeJSON('appointments.json', appointments);
 
+      // Save to MongoDB if connected
+      if (isMongoConnected && AppointmentModel) {
+        try { await new AppointmentModel(newAppointment).save(); } catch (e) {}
+      }
+
       syncAppointmentsToExcel().catch(err => {});
       broadcastEvent('new_appointment', newAppointment);
 
@@ -539,6 +599,11 @@ const server = http.createServer(async (req, res) => {
       appointments.unshift(newAppointment);
       writeJSON('appointments.json', appointments);
 
+      // Save to MongoDB if connected
+      if (isMongoConnected && AppointmentModel) {
+        try { await new AppointmentModel(newAppointment).save(); } catch (e) {}
+      }
+
       // Automatically append and sync new booking to Excel Log Sheet
       syncAppointmentsToExcel().catch(err => {
         console.error('[Excel Auto-Sync Error]:', err.message);
@@ -583,6 +648,11 @@ const server = http.createServer(async (req, res) => {
 
       writeJSON('appointments.json', appointments);
 
+      // Save to MongoDB if connected
+      if (isMongoConnected && AppointmentModel) {
+        try { await AppointmentModel.findOneAndUpdate({ id }, appointments[index]); } catch (e) {}
+      }
+
       // Sync updated status to Excel log
       syncAppointmentsToExcel().catch(err => {
         console.error('[Excel Sync Error]:', err.message);
@@ -613,6 +683,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     writeJSON('appointments.json', appointments);
+    if (isMongoConnected && AppointmentModel) {
+      try { await AppointmentModel.deleteOne({ id }); } catch (e) {}
+    }
     syncAppointmentsToExcel().catch(err => {});
     broadcastEvent('delete_appointment', { id });
 
@@ -655,6 +728,10 @@ const server = http.createServer(async (req, res) => {
       orders.unshift(newOrder);
       writeJSON('orders.json', orders);
 
+      if (isMongoConnected && OrderModel) {
+        try { await new OrderModel(newOrder).save(); } catch (e) {}
+      }
+
       // Broadcast real-time SSE event to Admin Panel
       broadcastEvent('new_order', newOrder);
 
@@ -688,6 +765,9 @@ const server = http.createServer(async (req, res) => {
       };
 
       writeJSON('orders.json', orders);
+      if (isMongoConnected && OrderModel) {
+        try { await OrderModel.findOneAndUpdate({ id }, orders[index]); } catch (e) {}
+      }
       broadcastEvent('update_order', orders[index]);
 
       return sendJSON(res, 200, {
@@ -776,8 +856,9 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-// Initial Excel Sync on server launch
+// Initial Excel Sync & MongoDB Connect on server launch
 syncAppointmentsToExcel();
+connectMongoDB();
 
 // Start Localtunnel for clean public URL with zero warning pages
 const startLocaltunnel = async (port) => {
