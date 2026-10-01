@@ -309,11 +309,20 @@ const openCheckoutModal = () => {
     return;
   }
   toggleCartDrawer();
-  document.getElementById('checkoutModal').classList.remove('hidden');
+  const modal = document.getElementById('checkoutModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+    modal.scrollTop = 0;
+  }
 };
 
 const closeCheckoutModal = () => {
-  document.getElementById('checkoutModal').classList.add('hidden');
+  const modal = document.getElementById('checkoutModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  }
 };
 
 // Handle Checkout Form Submission
@@ -372,12 +381,19 @@ const openBookingModalForService = (srvId) => {
   }
 
   const modal = document.getElementById('bookingModal');
-  if (modal) modal.classList.remove('hidden');
+  if (modal) {
+    modal.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+    modal.scrollTop = 0;
+  }
 };
 
 const closeBookingModal = () => {
   const modal = document.getElementById('bookingModal');
-  if (modal) modal.classList.add('hidden');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  }
 };
 
 const selectTimeSlot = (slotBtn, slotText) => {
@@ -482,10 +498,16 @@ const showConfirmationModal = (appt) => {
   }
 
   modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  modal.scrollTop = 0;
 };
 
 const closeConfirmationModal = () => {
-  document.getElementById('confirmationModal').classList.add('hidden');
+  const modal = document.getElementById('confirmationModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  }
 };
 
 // --- INITIALIZATION ---

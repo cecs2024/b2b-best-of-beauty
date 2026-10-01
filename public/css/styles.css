@@ -21,6 +21,12 @@ body {
   scroll-behavior: smooth;
 }
 
+/* Lock background scroll when modal is active */
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
 /* Typography Classes */
 .font-heading {
   font-family: 'Playfair Display', serif;
@@ -77,15 +83,15 @@ body {
   bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  z-index: 99999 !important;
-  background-color: rgba(0, 0, 0, 0.75) !important;
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
+  z-index: 2147483647 !important; /* Maximum CSS z-index */
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  padding-top: max(5.5rem, calc(80px + env(safe-area-inset-top))) !important; /* Clears mobile top header (80px) */
+  padding-top: max(5.5rem, calc(80px + env(safe-area-inset-top))) !important;
   padding-bottom: 2rem !important;
   padding-left: 0.75rem !important;
   padding-right: 0.75rem !important;
@@ -110,7 +116,7 @@ body {
   display: flex !important;
   flex-direction: column !important;
   color: #1A1A1A !important;
-  z-index: 100000 !important;
+  z-index: 2147483647 !important; /* Maximum CSS z-index */
   opacity: 1 !important;
   visibility: visible !important;
   box-sizing: border-box !important;
@@ -241,10 +247,6 @@ body {
   from {
     transform: translateX(0);
     opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
   }
 }
 
