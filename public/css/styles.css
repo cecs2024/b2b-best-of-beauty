@@ -71,7 +71,10 @@ body {
 /* 100% RESPONSIVE ADAPTIVE MODAL FOR ALL SCREEN SIZES (MOBILE, TABLET, LAPTOP) */
 .modal-backdrop {
   position: fixed !important;
-  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   z-index: 99999 !important;
@@ -79,9 +82,13 @@ body {
   backdrop-filter: blur(6px) !important;
   -webkit-backdrop-filter: blur(6px) !important;
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
-  justify-content: center !important;
-  padding: 1rem !important;
+  justify-content: flex-start !important;
+  padding-top: max(5.5rem, calc(80px + env(safe-area-inset-top))) !important; /* Clears mobile top header (80px) */
+  padding-bottom: 2rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
   box-sizing: border-box !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
@@ -91,8 +98,8 @@ body {
   position: relative !important;
   width: 92vw !important;
   max-width: 520px !important;
-  max-height: 85vh !important;
-  margin: auto !important;
+  max-height: calc(85vh - 4rem) !important;
+  margin: 0 auto 2rem auto !important;
   background-color: #FFFFFF !important;
   border-radius: 1.5rem !important;
   padding: 1.25rem !important;
@@ -111,9 +118,15 @@ body {
 }
 
 @media (min-width: 640px) {
+  .modal-backdrop {
+    justify-content: center !important;
+    padding-top: 2rem !important;
+  }
+
   .modal-dialog-card {
     padding: 2rem !important;
-    max-height: 90vh !important;
+    max-height: 88vh !important;
+    margin: auto !important;
   }
 }
 
@@ -228,6 +241,10 @@ body {
   from {
     transform: translateX(0);
     opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
 
