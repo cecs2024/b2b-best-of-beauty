@@ -172,7 +172,7 @@ const initRealtimeSSE = () => {
           const updated = JSON.parse(e.data);
           const item = adminState.appointments.find(a => String(a.id).trim().toLowerCase() === String(updated.id).trim().toLowerCase());
           if (item) {
-            item.status = updated.status;
+            Object.assign(item, updated);
             renderAdminDashboard();
           }
         }
@@ -187,7 +187,7 @@ const initRealtimeSSE = () => {
           const updated = JSON.parse(e.data);
           const item = adminState.orders.find(o => String(o.id).trim().toLowerCase() === String(updated.id).trim().toLowerCase());
           if (item) {
-            item.status = updated.status;
+            Object.assign(item, updated);
             renderAdminDashboard();
           }
         }
@@ -198,13 +198,15 @@ const initRealtimeSSE = () => {
 
   } catch (err) {
     console.warn('SSE fallback to polling');
-    setInterval(() => {
-      if (sessionStorage.getItem('b2b_admin_auth') === 'true') {
-        fetchAppointments();
-        fetchOrders();
-      }
-    }, 10000);
   }
+
+  // Smart Auto-Refresh Polling Backup (every 5s)
+  setInterval(() => {
+    if (sessionStorage.getItem('b2b_admin_auth') === 'true') {
+      fetchAppointments();
+      fetchOrders();
+    }
+  }, 5000);
 };
 
 // --- DATA FETCHERS ---
@@ -249,6 +251,37 @@ const fetchOrders = async () => {
     adminState.orders = JSON.parse(localStorage.getItem('b2b_orders') || '[]');
     renderAdminDashboard();
   }
+};
+
+// Helper for dynamic WhatsApp Quick Contact Message with Updated Status
+const getApptWhatsappMessage = (a) => {
+  let statusText = `is currently ${a.status.toUpperCase()}`;
+  if (a.status === 'Confirmed') {
+    statusText = `has been CONFIRMED 🎉. We look forward to welcoming you!`;
+  } else if (a.status === 'Completed') {
+    statusText = `is COMPLETED ✨. Thank you for visiting B2B (Best of Beauty)!`;
+  } else if (a.status === 'Cancelled') {
+    statusText = `is CANCELLED ❌. Please reach out if you would like to reschedule.`;
+  } else {
+    statusText = `is PENDING ⏳. We are processing your request.`;
+  }
+
+  return encodeURIComponent(`Hello ${a.customerName}! Your B2B (Best of Beauty) appointment for ${a.serviceName} on ${a.date} (${a.timeSlot}) ${statusText}\n\nRef ID: ${a.id}`);
+};
+
+const getOrderWhatsappMessage = (o) => {
+  let statusText = `is currently ${o.status.toUpperCase()}`;
+  if (o.status === 'Confirmed') {
+    statusText = `has been CONFIRMED 🎉. We are preparing your items!`;
+  } else if (o.status === 'Delivered' || o.status === 'Completed') {
+    statusText = `has been DELIVERED 🚚. Thank you for shopping with B2B (Best of Beauty)!`;
+  } else if (o.status === 'Cancelled') {
+    statusText = `is CANCELLED ❌. Please reach out if you need assistance.`;
+  } else {
+    statusText = `is PENDING ⏳. We have logged your order.`;
+  }
+
+  return encodeURIComponent(`Hello ${o.customerName}! Your B2B (Best of Beauty) order #${o.id} (${(o.items || []).map(i => `${i.name} x${i.quantity}`).join(', ')}) ${statusText}`);
 };
 
 // --- RENDERING & STATUS CONTROLS ---
@@ -311,7 +344,7 @@ const renderAdminDashboard = () => {
             <a href="tel:${a.phone}" class="p-2 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 inline-block" title="Call Customer">
               <i class="fas fa-phone-alt"></i>
             </a>
-            <a href="https://wa.me/91${a.phone}?text=${encodeURIComponent(`Hello ${a.customerName}, regarding your B2B (Best of Beauty) appointment for ${a.serviceName} on ${a.date} (${a.timeSlot}):`)}"
+            <a href="https://wa.me/91${a.phone}?text=${getApptWhatsappMessage(a)}"
                target="_blank" class="p-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 inline-block" title="WhatsApp Customer">
               <i class="fab fa-whatsapp text-sm"></i>
             </a>
@@ -351,7 +384,7 @@ const renderAdminDashboard = () => {
             <a href="tel:${o.phone}" class="p-2 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 inline-block" title="Call">
               <i class="fas fa-phone-alt"></i>
             </a>
-            <a href="https://wa.me/91${o.phone}?text=${encodeURIComponent(`Hello ${o.customerName}, regarding your order #${o.id} from B2B (Best of Beauty):`)}"
+            <a href="https://wa.me/91${o.phone}?text=${getOrderWhatsappMessage(o)}"
                target="_blank" class="p-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 inline-block" title="WhatsApp">
               <i class="fab fa-whatsapp text-sm"></i>
             </a>
