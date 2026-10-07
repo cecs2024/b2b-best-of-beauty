@@ -270,8 +270,8 @@ const renderAdminDashboard = () => {
   const totalApptsEl = document.getElementById('adminStatAppts');
   const pendingCountEl = document.getElementById('adminStatPending');
 
-  const totalApptRev = adminState.appointments.reduce((sum, a) => sum + (a.status === 'Completed' || a.status === 'Confirmed' ? Number(a.price || 0) : 0), 0);
-  const totalOrderRev = adminState.orders.reduce((sum, o) => sum + (o.status === 'Delivered' || o.status === 'Completed' || o.status === 'Confirmed' ? Number(o.total || 0) : 0), 0);
+  const totalApptRev = adminState.appointments.reduce((sum, a) => sum + (a.status === 'Completed' ? Number(a.price || 0) : 0), 0);
+  const totalOrderRev = adminState.orders.reduce((sum, o) => sum + (o.status === 'Delivered' || o.status === 'Completed' ? Number(o.total || 0) : 0), 0);
   const pendingCount = adminState.appointments.filter(a => a.status === 'Pending').length + adminState.orders.filter(o => o.status === 'Pending').length;
 
   if (totalRevEl) totalRevEl.innerText = `₹${(totalApptRev + totalOrderRev).toLocaleString()}`;

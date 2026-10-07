@@ -941,8 +941,8 @@ const server = http.createServer(async (req, res) => {
     const appointments = readJSON('appointments.json', []);
     const orders = readJSON('orders.json', []);
 
-    const totalAppointmentRevenue = appointments.reduce((sum, a) => sum + (a.status === 'Completed' || a.status === 'Confirmed' ? Number(a.price || 0) : 0), 0);
-    const totalOrderRevenue = orders.reduce((sum, o) => sum + (o.status === 'Delivered' || o.status === 'Completed' || o.status === 'Confirmed' ? Number(o.total || 0) : 0), 0);
+    const totalAppointmentRevenue = appointments.reduce((sum, a) => sum + (a.status === 'Completed' ? Number(a.price || 0) : 0), 0);
+    const totalOrderRevenue = orders.reduce((sum, o) => sum + (o.status === 'Delivered' || o.status === 'Completed' ? Number(o.total || 0) : 0), 0);
 
     const pendingAppointments = appointments.filter(a => a.status === 'Pending').length;
     const pendingOrders = orders.filter(o => o.status === 'Pending').length;
